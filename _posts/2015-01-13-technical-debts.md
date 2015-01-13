@@ -8,10 +8,10 @@ The long list is as following:
 1. ~~jekyll~~, static web framework using markdown/textile format
 2. ~~scss~~, css preprocessor
 3. coffeescript
-4. yaml, markup language
-5. liquid, templating language
+4. ~~yaml~~, markup language
+5. ~~liquid~~, templating language
 6. ~~markdown~~, text file format and tool
-7. textile, text file format
+7. ~~textile~~, text file format
 8. latex, text print format
 9. MathJax, MathXML, math markup language
 10. sublime, text editor
@@ -51,3 +51,8 @@ The long list is as following:
 44. opengl
 45. ssh
 46. docker, container
+47. sed, awk
+48. vim
+49. textmate
+50. apt-get, homebrew, gem, pip, npm
+51. charset, encoding, language codes
