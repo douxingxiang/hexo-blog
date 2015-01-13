@@ -11,4 +11,15 @@ twitter_username: douxingxiang
 github_username:  douxingxiang
 
 # Build settings
-markdown: kramdown
+markdown: redcarpet
+redcarpet:
+  extensions: ["fenced_code_blocks", "strikethrough", "tables"]
+
+defaults:
+  -
+    scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+      author: "Dou"
