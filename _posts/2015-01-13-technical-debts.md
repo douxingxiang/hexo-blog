@@ -50,9 +50,10 @@ The long list is as following:
 43. ai
 44. opengl
 45. ssh
-46. docker, container
+46. docker, container, coreos, rocket
 47. sed, awk
 48. vim
 49. textmate
 50. apt-get, homebrew, gem, pip, npm
 51. charset, encoding, language codes
+52.jira, bugzilla, redmine, confluence, travis, jenkins
