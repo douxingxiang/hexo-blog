@@ -23,3 +23,6 @@ defaults:
     values:
       layout: "post"
       author: "Dou"
+
+keep_files: ["_site/assets"]
+lsi: true

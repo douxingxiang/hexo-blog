@@ -163,6 +163,7 @@
  */
 .page-content {
     padding: $spacing-unit 0;
+    text-align: center;
 }
 
 .page-heading {
@@ -172,7 +173,7 @@
 .post-list {
     margin-left: 0;
     list-style: none;
-
+    text-align: left;
     > li {
         margin-bottom: $spacing-unit;
     }
@@ -209,6 +210,7 @@
 
 .post-content {
     margin-bottom: $spacing-unit;
+    text-align: left;
 
     h2 {
         font-size: 32px;
@@ -236,5 +238,27 @@
 
     p {
         font-size: 20px;
+    }
+}
+
+.main-title {
+    img {
+        width: 100px;
+    }
+    ul {
+        padding: 0;
+        margin: 0;
+        li {
+            display: inline;
+            height: 0px;
+            padding: 10px;
+        }
+    }
+    svg {
+        width: 30px;
+        height: 30px;
+        path {
+            fill: $grey-color;
+        }
     }
 }
