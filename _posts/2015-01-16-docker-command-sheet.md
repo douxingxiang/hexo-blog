@@ -1,6 +1,6 @@
 ---
 title: Docker Commandline Reference
-categories: docker
+tags: docker
 ---
 
 # Repository Operations

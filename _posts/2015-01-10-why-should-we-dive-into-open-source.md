@@ -1,8 +1,7 @@
 ---
 layout: post
-title:  "Diving into Open Source"
-date:   2015-01-10 23:05:08
-permalink: project/2015-1-10-why-should-we-dive-into-open-source
+title:  Diving into Open Source
+tags: life
 ---
 
 Open source has been a movement for about two decades, but people always have a desire to share amazing stuff, to work with talented peers, to help the ones who have trouble in solving some problem. 

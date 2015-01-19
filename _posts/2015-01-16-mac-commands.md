@@ -1,6 +1,6 @@
 ---
 title: Mac Termial Commandlines
-categories: shell
+tags: shell
 ---
 
 ## 磁盘管理

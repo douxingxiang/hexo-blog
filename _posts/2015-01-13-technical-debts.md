@@ -1,6 +1,6 @@
 ---
 title: Technical Debts
-categories: list
+tags: list
 ---
 
 The long list is as following:

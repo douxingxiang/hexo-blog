@@ -1,8 +1,7 @@
 ---
 title: Python Issues
-categories: python
+tags: python
 ---
-python issues
 
 # 1 global variable
 
