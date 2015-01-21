@@ -23,6 +23,13 @@ defaults:
     values:
       layout: "post"
       author: "Dou"
+  -
+    scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "page"
+      author: "Dou"
 
 keep_files: ["_site/assets"]
-lsi: true
+lsi: false # too many file will corrupt the build

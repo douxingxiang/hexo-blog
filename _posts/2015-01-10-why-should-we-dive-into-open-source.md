@@ -1,5 +1,4 @@
 ---
-layout: post
 title:  Diving into Open Source
 tags: life
 ---

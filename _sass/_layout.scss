@@ -166,16 +166,42 @@
     text-align: center;
 }
 
+.tag-list {
+    clear: both;
+    width: 100%;
+    text-align: left;
+    position: relative;
+}
+
+.tag-header {
+    float: left;
+    width: 20%;
+    text-align: right;
+    padding-right: 10px;
+    color: $grey-color-dark;
+}
+
 .page-heading {
     font-size: 20px;
 }
 
 .post-list {
+    float: left;
+    border-left: 5px solid orange;
     margin-left: 0;
+    padding-left: 10px;
     list-style: none;
     text-align: left;
+    min-height: 42px;
+    /*
     > li {
-        margin-bottom: $spacing-unit;
+        margin-bottom: $spacing-unit; 
+    }
+    */
+    h2 {
+        display: inline;
+        font-size: $small-font-size;
+        line-height: $small-font-size;
     }
 }
 
@@ -184,12 +210,13 @@
     color: $grey-color;
 }
 
+/**
 .post-link {
     display: block;
     font-size: 24px;
 }
 
-
+ */
 
 /**
  * Posts
@@ -212,8 +239,16 @@
     margin-bottom: $spacing-unit;
     text-align: left;
 
-    h2 {
+    h1 {
         font-size: 32px;
+
+        @include media-query($on-laptop) {
+            font-size: 30px;
+        }
+    }
+
+    h2 {
+        font-size: 30px;
 
         @include media-query($on-laptop) {
             font-size: 28px;
