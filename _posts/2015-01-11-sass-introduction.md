@@ -68,9 +68,9 @@ A mixin lets you make groups of CSS declarations using `@mixin` directive, and r
       -ms-border-radius: $radius;
           border-radius: $radius;
 }
-```
 
 .box { @include border-radius(10px); }
+```
 
 #### Extend/Inheritance
 
