@@ -42,6 +42,14 @@ tags: programming
 - 断言
     - `assert`
 
+## 字符串
+
+- `String`, `Character`
+- 字面量: 双引号包围
+- 初始化
+    - 空字符串字面量
+    - String实例
+
 ## 语言特征
 
 ### 注释
@@ -92,6 +100,11 @@ tags: programming
     - `do-while`
     - 双点号`..`表示范围,不包括上界,`...`包括上界
 - 条件和循环的圆括号可以省略
+- 控制转移
+    - `break`
+    - `continue`
+    - `fallthrough`
+    - `return`
 
 ## 函数和闭包
 
@@ -112,6 +125,34 @@ tags: programming
     - `sort([1,3,4,2]) {$0 > $1}`
     - 可以给函数参数定义第二个名称
         - `func hello(msg textStr: String)`
+- 参数
+    - 外部参数与本地参数同名, `#`添加到变量前面
+    - 输入输出参数, 变量名前加`&`, `inout`
+- 闭包
+    - 闭包表达式
+            
+            reversed = sort(names, {(s1: String, s2: String) -> Bool in return s1 > s2 })
+
+        - 根据上下文推断类型
+            
+                reversed = sort(names, {s1, s2 in return s1 > s2 })
+
+        - 单行表达式可以省略`return`
+                
+                reversed = sort(names, {s1, s2 in s1 > s2})
+
+        - 参数吗简写
+            
+                reversed = sort(names, {$0 > $1})
+
+        - 运算符函数
+                
+                reversed = sort(names, > )
+
+    - Trailing闭包
+        - 在函数括号之外的闭包表达式
+            
+                reversed = sort(names) {$0 > $1}
 
 ## 对象和类
 
@@ -120,9 +161,11 @@ tags: programming
     - 类名后面加括号,可以创建类的实例`Shape()`
     - 构造函数`init`
     - 析构函数`deinit`
+    - `self`属性，实例
 - 继承
     - 子类后面跟冒号、父类来继承`class Child: Parent`
-    - 重写父类方法`override`
+    - 重写父类方法，属性，属性观察器，`override`
+    - 防止重写`@final`
 - 访问器方法
     - `get/set`是放在类成员属性内部的
 
@@ -136,6 +179,11 @@ tags: programming
             }
 
     - 可以在`set`后面显示设置一个新值替代`newValue`
+- 附属脚本
+        
+        subscript(index: Int) -> Int {
+            //返回与index匹配的值
+        }
 
 ## 枚举和结构
 
@@ -147,6 +195,19 @@ tags: programming
     - `struct`
     - 结构体传值,类传引用
 
+## swift属性
+
+- 存储属性
+    - 变量存储属性`var`
+    - 常量存储属性`let`
+    - 延迟存储属性`@lazy`
+- 计算属性
+    - getter只读计算属性
+    - setter只写计算属性
+- 类型属性
+    - `static`定义值类型类型属性
+    - `class`定义类类型属性
+
 ## 接口和扩展
 
 - 接口
@@ -155,6 +216,9 @@ tags: programming
 - 扩展
     - `extension`
     - 为现有类型添加功能
+- 属性监视器
+    - `willSet`设置新值前调用
+    - `didSet`新值被设置后立即调用
 
 ## 泛型
 

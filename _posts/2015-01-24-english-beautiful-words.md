@@ -20,3 +20,5 @@ tags: list
 - awesome
 - fascinating
 - fabulous
+- considerable
+- substantial
