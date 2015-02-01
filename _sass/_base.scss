@@ -109,10 +109,10 @@ a {
  */
 blockquote {
     color: $grey-color;
-    border-left: 4px solid $grey-color-light;
+    border-left: 4px solid $orange-color;
     padding-left: $spacing-unit / 2;
-    font-size: 18px;
-    letter-spacing: -1px;
+    font-size: $h5-font-size;
+    letter-spacing: 1px;
     font-style: italic;
 
     > :last-child {
@@ -127,7 +127,7 @@ blockquote {
  */
 pre,
 code {
-    font-size: 15px;
+    font-size: $h5-font-size;
     border: 1px solid $grey-color-light;
     border-radius: 3px;
     background-color: #eef;
