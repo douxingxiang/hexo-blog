@@ -67,8 +67,36 @@ def float_notate
 	puts "0.4 - 0.1 = #{fl}"
 end
 
+def single_quote
+	one_line  = '单行文本可以包含\'也可以包含\单个反斜杠不能包含\t制表符'
+	many_line = '第一行
+	第二行'
+	many_line2 = '第一行' \
+		'也是第一行'
+	puts one_line
+	puts many_line
+	puts many_line2
+end
+
+def double_quote
+	more_esc = "支持\t制表符"
+	uni_esc = "支持Uniocde转义\u03C0"
+	str_ins = "支持字符串内插#{__FILE__}"
+	print_ins = "支持prinf样式的内插%d,%s" %[1, "%"]
+	many_line = "第一行
+	第二行带续行 \
+	第二行剩余部分"
+	puts more_esc
+	puts uni_esc
+	puts str_ins
+	puts print_ins
+	puts many_line
+end
+
 integer
 divide
 exponent
 mod
 float_notate
+single_quote
+double_quote
