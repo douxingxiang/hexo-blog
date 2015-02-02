@@ -115,3 +115,6 @@ tags: programming
     - 存储相同类型固定大小的顺序集合
     - `datatype[] arrayName;`
     - `Array`
+- 字符串
+    - `String`, `System.String`
+    - 
