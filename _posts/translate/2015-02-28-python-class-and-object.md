@@ -174,13 +174,19 @@ The above applies to all instance method object including the `__init__`method.
     >>> 10`</pre>
 
 # Static and Class Methods
+# 静态和类方法
 
 All methods defined in a class by default operate on instances. However, one can define static or class methods by decorating such methods with the corresponding `@staticmethod` or `@classmethod` decorators.
 
+类中定义的方法默认由实例操作。但是，我们也可以通过对应的`@staticmethod`和`@classmethod`装饰来定义静态或类方法。
+
 # Static Methods
+# 静态方法
 
 Static methods are normal functions that exist in the namespace of a class. Referencing a static method from a class shows that rather than an _unbound_method type, a _function_ type is returned as shown below:
-    <pre>`
+
+静态方式是类命名空间中的普通函数。引用类的静态方法返回的是_函数_类型，而不是_非绑定_方法类型：
+
     class Account(object):
         num_accounts = 0
 
@@ -208,14 +214,19 @@ Static methods are normal functions that exist in the namespace of a class. Refe
     >>> Account.deposit
     <unbound method Account.deposit>
     >>> Account.type
-    <function type at 0x106893668>`</pre>
+    <function type at 0x106893668>
 
 To define a static method, the `@staticmethod` decorator is used and such methods do not require the `self` argument. Static methods provide a mechanism for better organization as code related to a class are placed in that class and can be overridden in a sub-class as needed.
 
+使用`@staticmethod`装饰器来定义静态方法，这些方法不需要`self`参数。静态方法可以更好地组织与类相关的代码，也可以在子类中被重写。
+
 # Class Methods
+# 类方法
 
 Class methods as the name implies operate on classes themselves rather than instances. Class methods are created using the `@classmethod`decorator with the `class` rather than `instance` passed as the first argument to the method.
-    <pre>`import json
+类方法由类自身来操作，而不是实例。类方法使用`@classmethod`装饰器定义，作为第一个参数被传递给方法的是`类`而不是`实例`。
+
+    import json
 
     class Account(object):
         num_accounts = 0
@@ -248,11 +259,17 @@ Class methods as the name implies operate on classes themselves rather than inst
 
 A motivating example of the usage of class methods is as a _factory_ for object creation. Imagine data for the `Account` class comes in different formats such as _tuples, json string_ etc. We cannot define multiple `__init__`methods as a Python class can have only one `__init__` method so class methods come in handy for such situations. In the `Account` class defined above for example, we want to initialize an account from a _json_ string object so we define a class factory method, `from_json` that takes in a json string object and handles the extraction of parameters and creation of the account object using the extracted parameters. Another example of a class method in action is the [`dict.fromkeys`](https://docs.python.org/3/library/stdtypes.html#dict.fromkeys) methods that is used for creating _dict_objects from a sequence of supplied keys and value.
 
+类方法一个常见的用法是作为对象创建的_工厂_。假如`Account`类的数据格式有很多种，比如_元组、json字符串_等。由于Python类只能定义一个`__init__`方法，所以类方法在这些情形中就很方便。以上文定义的`Account`类为例，我们想根据一个_json_字符串对象来初始化一个账户，我们定义一个类工厂方法`from_json`，它读取json字符串对象，解析参数，根据参数创建账户对象。另一个类实例的例子是[`dict.fromkeys`](https://docs.python.org/3/library/stdtypes.html#dict.fromkeys) 方法，它从一组键和值序列中创建_dict_对象。
+
 ## Python Special Methods
+## Python特殊方法
 
 Sometimes we may want to customize user-defined classes. This may be either to change the way class objects are created and initialized or to provide polymorphic behavior for certain operations. Polymorphic behavior enables user-defined classes to define their own implementation for certain python operation such as the `+` operation. Python provides _special_methods that enable this. These methods are normally of the form `__*__`where `*` refers to a method name. Examples of such methods are`__init__` and `__new__` for customizing object creation and initialization,`__getitem__`, `__get__`, `__add__` and `__sub__` for emulating in built python types, `__getattribute__`, `__getattr__` etc. for customizing attribute access etc. These are just a few of the special methods. We discuss a few important special methods below to provide an understanding but the [python documentation](https://docs.python.org/2/reference/datamodel.html#special-method-names) provides a comprehensive list of these methods.
 
+有时我们希望自定义类。这需要改变类对象创建和初始化的方法，或者对某些操作提供多态行为。多态行为允许自定义类定义某些如`+`等python操作的自身实现。Python的_特殊_方法可以做到这些。这些方法一般都是`__*__`形式，其中`*`表示方法名。如`__init__`和`__new__`来自定义对象创建和初始化，`__getitem__`、`__get__`、`__add__`、`__sub__`来模拟python内建类型，还有`__getattribute__`、`__getattr__`等自定义属性访问。只有一些特殊方法我们讨论一些重要的特殊方法做个简单理解，[python文档](https://docs.python.org/2/reference/datamodel.html#special-method-names)提供了全部方法。
+
 # Special methods for Object Creation
+# 进行对象创建的特殊方法
 
 New class instances are created in a two step process using the `__new__`method to create a new instance and the `__init__` method to initialize the newly created object. Users are already familiar with defining the `__init__`method; the `__new__` method is rarely defined by the user for each class but this is possible if one wants to customize the creation of class instances.
 
