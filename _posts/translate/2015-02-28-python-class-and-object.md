@@ -318,11 +318,13 @@ We can customize attribute access for class instances by implementing the follow
 
 1.  `__getattr__(self, name)__`: This method is **_only_** called when an attribute, _name_, that is referenced is neither an instance attribute nor is it found in the class tree for the object. This method should return some value for the attribute or raise an `AttributeError` exception. For example, if _x_ is an instance of the _Account_ class defined above, trying to access an attribute that does not exist will result in a call to this method.
 1.  `__getattr__(self, name)__`：这个方法**_只有_**当_name_既不是实例属性也不能在对象的类继承链中找到时才会被调用。这个方法应当返回属性值或者引发`AttributeError`异常。例如，如果_x_是_Account_类的实例，尝试访问不存在的属性将会调用这个方法。
-    >>> acct = Account("obi", 10)
-    >>> acct.number
-    Hey I dont see any attribute called number
-Note that If `__getattr__` code references instance attributes, and those attributes do not exist, an infinite loop may occur because the`__getattr__` method is called successively without end.
-注意如果 `__getattr__`引用不存在的实例属性，可能会发生死循环，因为`__getattr__`方法不断被调用。
+    
+        >>> acct = Account("obi", 10)
+        >>> acct.number
+        Hey I dont see any attribute called number
+    
+    Note that If `__getattr__` code references instance attributes, and those attributes do not exist, an infinite loop may occur because the`__getattr__` method is called successively without end.
+    注意如果 `__getattr__`引用不存在的实例属性，可能会发生死循环，因为`__getattr__`方法不断被调用。
 2.  `__setattr__(self, name, value)__`: This method is called whenever an attribute assignment is attempted. `__setattr__` should insert the value being assigned into the dictionary of the instance attributes rather than using `self.name=value` which results in a recursive call and hence to an infinite loop.
 2. `__setattr__(self, name, value)__`：这个方法当属性赋值发生时调用。`__setattr__`将会把值插入到实例属性字典中，而不是使用`self.name=value`，因为它会导致递归调用的死循环。
 3.  `__delattr__(self, name)__`: This is called whenever `del obj` is called.
@@ -382,62 +384,62 @@ In the above, the `CustomList` is a thin wrapper around an actual list. We hav
 
 1.  `__len__(self)` : This is called when the `len()` function is called on an instance of the `CustomList` as shown below:
 1. `__len__(self)`：对`CustomList`实例调用`len()`函数时被调用。
-    >>> myList = CustomList()    
-    >>> myList.append(1)    
-    >>> myList.append(2)
-    >>> myList.append(3)
-    >>> myList.append(4)
-    >>> len(myList)
-    4
+        >>> myList = CustomList()    
+        >>> myList.append(1)    
+        >>> myList.append(2)
+        >>> myList.append(3)
+        >>> myList.append(4)
+        >>> len(myList)
+        4
 2.  `__getitem__(self, value)`: provides support for the use of square bracket indexing on an instance of the CustomList class as shown below:
 2.  `__getitem__(self, value)`：提供CustomList类实例的方括号索引用法支持：
-    >>> myList = CustomList()
-    >>> myList.append(1)    
-    >>> myList.append(2)
-    >>> myList.append(3)
-    >>> myList.append(4)
-    >>> myList[3]
-    4
+        >>> myList = CustomList()
+        >>> myList.append(1)    
+        >>> myList.append(2)
+        >>> myList.append(3)
+        >>> myList.append(4)
+        >>> myList[3]
+        4
 3.  `__setitem__(self, key, value)`: Called to implement the assignment of value to to self[key] on an instance of the _CustomList_ class.
 3.  `__setitem__(self, key, value)`：当对_CustomList_类实例上self[key]赋值时调用。
-    >>> myList = CustomList()
-    >>> myList.append(1)    
-    >>> myList.append(2)
-    >>> myList.append(3)
-    >>> myList.append(4)
-    >>> myList[3] = 100
-    4
-    >>> myList[3]
-    100
+        >>> myList = CustomList()
+        >>> myList.append(1)    
+        >>> myList.append(2)
+        >>> myList.append(3)
+        >>> myList.append(4)
+        >>> myList[3] = 100
+        4
+        >>> myList[3]
+        100
 4.  `__contains__(self, key)`: Called to implement membership test operators. Should return true if item is in self, false otherwise.
 4.  `__contains__(self, key)`：成员检测时调用。如果包含该项就返回true，否则false。
-    >>> myList = CustomList()
-    >>> myList.append(1)    
-    >>> myList.append(2)
-    >>> myList.append(3)
-    >>> myList.append(4)
-    >>> 4 in myList
-    True
+        >>> myList = CustomList()
+        >>> myList.append(1)    
+        >>> myList.append(2)
+        >>> myList.append(3)
+        >>> myList.append(4)
+        >>> 4 in myList
+        True
 5.  `__repr__(self)`: Called to compute the object representation for _self_when print is called with _self_ as argument.
 5.  `__repr__(self)`：当用print打印_self_时调用，将会打印_self_的对象表示。
-    >>> myList = CustomList()
-    >>> myList.append(1)    
-    >>> myList.append(2)
-    >>> myList.append(3)
-    >>> myList.append(4)
-    >>> print myList
-    [1, 2, 3, 4]
+        >>> myList = CustomList()
+        >>> myList.append(1)    
+        >>> myList.append(2)
+        >>> myList.append(3)
+        >>> myList.append(4)
+        >>> print myList
+        [1, 2, 3, 4]
 6.  `__add__(self, otherList)`: Called to compute the addition of two instances of CustomList when the `+` operator is used to add two instances together.
 6.  `__add__(self, otherList)`：使用`+`操作符来计算两个CustomList实例相加时调用。
-    >>> myList = CustomList()
-    >>> otherList = CustomList()
-    >>> otherList.append(100)
-    >>> myList.append(1)    
-    >>> myList.append(2)
-    >>> myList.append(3)
-    >>> myList.append(4)
-    >>> myList + otherList + otherList
-    [1, 2, 3, 4, 100, 100]
+        >>> myList = CustomList()
+        >>> otherList = CustomList()
+        >>> otherList.append(100)
+        >>> myList.append(1)    
+        >>> myList.append(2)
+        >>> myList.append(3)
+        >>> myList.append(4)
+        >>> myList + otherList + otherList
+        [1, 2, 3, 4, 100, 100]
 
 The above provide an example of how we can customize class behavior by defining certain special class methods. For a comprehensive listing of all such custom methods, see the [python documentation](https://docs.python.org/2/reference/datamodel.html#basic-customization). In a follow-up tutorial, we put all we have discussed about special methods together and explain**descriptors**, a very important functionality that has widespread usage in python object oriented programming.
 
