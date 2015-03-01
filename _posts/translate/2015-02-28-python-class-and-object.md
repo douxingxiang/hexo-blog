@@ -1,6 +1,6 @@
 In python, everything is an object. Classes provide the mechanism for creating new kinds of objects. In this tutorial, we ignore the basics of classes and object oriented programming and focus on topics that provide a better understanding of object oriented programming in python. It is assumed that we are dealing with new style classes. These are python classes that inherit from _object_ super class.
 
-Python中一切都是对象。类提供了创建新类型对象的机制。这篇教程中，我们忽略类和面向对象的基本知识，而专注在更好地理解Python的面向对象编程上。假设我们在处理新风格的python类，它们继承自_对象_父类。
+Python中一切都是对象。类提供了创建新类型对象的机制。这篇教程中，我们不谈类和面向对象的基本知识，而专注在更好地理解Python面向对象编程上。假设我们使用新风格的python类，它们继承自_对象_父类。
 
 ## Defining Classes
 ## 定义类
@@ -27,7 +27,7 @@ The `class` statement is used to define new classes. The class statement defin
                 self.balance = self.balance - amt 
 
             def inquiry(self):
-                return self.balance `</pre>
+                return self.balance 
 
 Class definitions introduce the following new objects:
 
@@ -46,7 +46,7 @@ Class definitions introduce the following new objects:
 
 When a class definition is encountered during the execution of a program, a new namespace is created and this serves as the namespace into which all class variable and method definition name bindings go. Note that this namespace does not create a new local scope that can be used by class methods hence the need for fully qualified names when accessing variables in methods. The `Account` class from the previous section illustrates this; methods trying to access the `num_of_accounts` variable must use the fully qualified name, `Account.num_of_accounts` else an error results as shown below when the fully qualified name is not used in the `__init__` method:
 
-程序执行过程中遇到类定义时，就会创建新的命名空间，命名空间包含所有类变量和方法定义的名称绑定。注意该命名空间并没有创建类方法可以使用的新局部作用域，因此在方法中访问变量需要全限定名称。上一节的`Account`类演示了该特性；尝试访问`num_of_accounts`变量的方法需要使用全限定名称`Account.num_of_accounts`，否则，如果没有在`__init__`方法中使用全限定名称，会触发如下的错误：
+程序执行过程中遇到类定义时，就会创建新的命名空间，命名空间包含所有类变量和方法定义的名称绑定。注意该命名空间并没有创建类方法可以使用的新局部作用域，因此在方法中访问变量需要全限定名称。上一节的`Account`类演示了该特性；尝试访问`num_of_accounts`变量的方法需要使用全限定名称`Account.num_of_accounts`，否则，如果没有在`__init__`方法中使用全限定名称，会引发如下错误：
 
     class Account(object):
         num_accounts = 0
@@ -72,11 +72,11 @@ When a class definition is encountered during the execution of a program, a new 
     Traceback (most recent call last):
       File "python", line 1, in <module>
       File "python", line 9, in __init__
-    UnboundLocalError: local variable 'num_accounts' referenced before assignment`</pre>
+    UnboundLocalError: local variable 'num_accounts' referenced before assignment
 
 At the end of the execution of a class definition, a class object is created. The scope that was in effect just before the class definition was entered is reinstated, and the class object is bound here to the class name given in the class definition header.
 
-类定义执行的最后，会创建一个类对象。在进入类定义之前有效的作用域现在被恢复了，同时类对象被绑定到类定义头的类名上。
+类定义执行的最后，会创建一个类对象。在进入类定义之前有效的那个作用域现在被恢复了，同时类对象被绑定到类定义头的类名上。
 
 A little diversion here, one may ask, **_if the class created is an object then what is the class of the class object ?_**. In accordance to the _everything is an object_ philosophy of python, the class object does indeed have a class which it is created from and in the python new style class, this is the `type`class.
 
@@ -96,7 +96,7 @@ Class objects support attribute reference and instantiation. Attributes are refe
     >>> Account.num_accounts
     >>> 0
     >>> Account.deposit
-    >>> <unbound method Account.deposit>`</pre>
+    >>> <unbound method Account.deposit>
 
 Class instantiation uses function notation. Instantiation involved calling the class object like a normal functions without parameter as shown below for the Account class:
 
@@ -113,7 +113,7 @@ After instantiation of a class object, an instance object is returned and the`__
 
 If class objects are the cookie cutters then instance objects are the cookies that are the result of instantiating class objects. Attribute, data and method objects, references are the only operations that are valid on instance objects.
 
-如果类对象是饼干切割刀，饼干就是实例化类对象的结果。实例对象上的全部有效操作为属性、数据和方法对象，引用。
+如果类对象是饼干切割刀，饼干就是实例化类对象的结果。实例对象上的全部有效操作为对属性、数据和方法对象的引用。
 
 # Method Objects
 # 方法对象
@@ -132,7 +132,7 @@ What exactly happens when an instance method is called? You may have noticed tha
 
 The special thing about methods is that the object on which a method is being called is passed as the first argument of the function. In our example, the call to `x.inquiry()` is exactly equivalent to `Account.f(x)`. In general, calling a method with a list of _n_ arguments is equivalent to calling the corresponding function with an argument list that is created by inserting the method’s object before the first argument.
 
-特殊之处在于方法所作用的对象被作为函数的第一个参数。在我们的例子中，对`x.inquiry()`的调用等价于`Account.f(x)`。一般，调用_n_参数的方法等同于将方法的作用对象插入到第一个参数位置。
+特殊之处在于方法所作用的对象被作为函数的第一个参数传递过去。在我们的例子中，对`x.inquiry()`的调用等价于`Account.f(x)`。一般，调用_n_参数的方法等同于将方法的作用对象插入到第一个参数位置。
 
 The python tutorial says:
         
@@ -140,7 +140,7 @@ python教程上讲：
 
 > When an instance attribute is referenced that isn’t a data attribute, its class is searched. If the name denotes a valid class attribute that is a function object, a method object is created by packing (pointers to) the instance object and the function object just found together in an abstract object: this is the method object. When the method object is called with an argument list, a new argument list is constructed from the instance object and the argument list, and the function object is called with this new argument list.
 
-> 当引用的实例属性不是数据属性时，就会搜索类。如果名称表示一个合法的函数对象，实例对象和函数对象将会把打包到一个抽象对象，即方法对象。包含参数列表的方法对象被调用时，将会根据实例对象和参数列表创建一个新的参数列表，然后函数对象将会使用新的参数列表被调用。
+> 当引用的实例属性不是数据属性时，就会搜索类。如果名称表示一个合法的函数对象，实例对象和函数对象将会被打包到一个抽象对象，即方法对象中。包含参数列表的方法对象被调用时，将会根据实例对象和参数列表创建一个新的参数列表，然后函数对象将会使用新的参数列表被调用。
 
 The above applies to all instance method object including the `__init__`method. The self argument is actually not a keyword and any valid argument name can be used as shown in the below definition for the Account class:
 
@@ -171,14 +171,14 @@ The above applies to all instance method object including the `__init__`method.
     >>> x = Account('obi', 0)
     >>> x.deposit(10)
     >>> Account.inquiry(x)
-    >>> 10`</pre>
+    >>> 10
 
 # Static and Class Methods
 # 静态和类方法
 
 All methods defined in a class by default operate on instances. However, one can define static or class methods by decorating such methods with the corresponding `@staticmethod` or `@classmethod` decorators.
 
-类中定义的方法默认由实例操作。但是，我们也可以通过对应的`@staticmethod`和`@classmethod`装饰来定义静态或类方法。
+类中定义的方法默认由实例调用。但是，我们也可以通过对应的`@staticmethod`和`@classmethod`装饰器来定义静态或类方法。
 
 # Static Methods
 # 静态方法
@@ -224,7 +224,7 @@ To define a static method, the `@staticmethod` decorator is used and such meth
 # 类方法
 
 Class methods as the name implies operate on classes themselves rather than instances. Class methods are created using the `@classmethod`decorator with the `class` rather than `instance` passed as the first argument to the method.
-类方法由类自身来操作，而不是实例。类方法使用`@classmethod`装饰器定义，作为第一个参数被传递给方法的是`类`而不是`实例`。
+类方法由类自身来调用，而不是实例。类方法使用`@classmethod`装饰器定义，作为第一个参数被传递给方法的是`类`而不是`实例`。
 
     import json
 
@@ -255,28 +255,34 @@ Class methods as the name implies operate on classes themselves rather than inst
 
         @staticmethod
         def type():
-            return "Current Account"`</pre>
+            return "Current Account"
 
 A motivating example of the usage of class methods is as a _factory_ for object creation. Imagine data for the `Account` class comes in different formats such as _tuples, json string_ etc. We cannot define multiple `__init__`methods as a Python class can have only one `__init__` method so class methods come in handy for such situations. In the `Account` class defined above for example, we want to initialize an account from a _json_ string object so we define a class factory method, `from_json` that takes in a json string object and handles the extraction of parameters and creation of the account object using the extracted parameters. Another example of a class method in action is the [`dict.fromkeys`](https://docs.python.org/3/library/stdtypes.html#dict.fromkeys) methods that is used for creating _dict_objects from a sequence of supplied keys and value.
 
-类方法一个常见的用法是作为对象创建的_工厂_。假如`Account`类的数据格式有很多种，比如_元组、json字符串_等。由于Python类只能定义一个`__init__`方法，所以类方法在这些情形中就很方便。以上文定义的`Account`类为例，我们想根据一个_json_字符串对象来初始化一个账户，我们定义一个类工厂方法`from_json`，它读取json字符串对象，解析参数，根据参数创建账户对象。另一个类实例的例子是[`dict.fromkeys`](https://docs.python.org/3/library/stdtypes.html#dict.fromkeys) 方法，它从一组键和值序列中创建_dict_对象。
+类方法一个常见的用法是作为对象创建的_工厂_。假如`Account`类的数据格式有很多种，比如_元组、json字符串_等。由于Python类只能定义一个`__init__`方法，所以类方法在这些情形中就很方便。以上文`Account`类为例，我们想根据一个_json_字符串对象来初始化一个账户，我们定义一个类工厂方法`from_json`，它读取json字符串对象，解析参数，根据参数创建账户对象。另一个类实例的例子是[`dict.fromkeys`](https://docs.python.org/3/library/stdtypes.html#dict.fromkeys) 方法，它从一组键和值序列中创建_dict_对象。
 
 ## Python Special Methods
 ## Python特殊方法
 
 Sometimes we may want to customize user-defined classes. This may be either to change the way class objects are created and initialized or to provide polymorphic behavior for certain operations. Polymorphic behavior enables user-defined classes to define their own implementation for certain python operation such as the `+` operation. Python provides _special_methods that enable this. These methods are normally of the form `__*__`where `*` refers to a method name. Examples of such methods are`__init__` and `__new__` for customizing object creation and initialization,`__getitem__`, `__get__`, `__add__` and `__sub__` for emulating in built python types, `__getattribute__`, `__getattr__` etc. for customizing attribute access etc. These are just a few of the special methods. We discuss a few important special methods below to provide an understanding but the [python documentation](https://docs.python.org/2/reference/datamodel.html#special-method-names) provides a comprehensive list of these methods.
 
-有时我们希望自定义类。这需要改变类对象创建和初始化的方法，或者对某些操作提供多态行为。多态行为允许自定义类定义某些如`+`等python操作的自身实现。Python的_特殊_方法可以做到这些。这些方法一般都是`__*__`形式，其中`*`表示方法名。如`__init__`和`__new__`来自定义对象创建和初始化，`__getitem__`、`__get__`、`__add__`、`__sub__`来模拟python内建类型，还有`__getattribute__`、`__getattr__`等自定义属性访问。只有一些特殊方法我们讨论一些重要的特殊方法做个简单理解，[python文档](https://docs.python.org/2/reference/datamodel.html#special-method-names)提供了全部方法。
+有时我们希望自定义类。这需要改变类对象创建和初始化的方法，或者对某些操作提供多态行为。多态行为允许定制在类定义中某些如`+`等python操作的自身实现。Python的_特殊_方法可以做到这些。这些方法一般都是`__*__`形式，其中`*`表示方法名。如`__init__`和`__new__`来自定义对象创建和初始化，`__getitem__`、`__get__`、`__add__`、`__sub__`来模拟python内建类型，还有`__getattribute__`、`__getattr__`等来定制属性访问。只有为数不多的特殊方法，我们讨论一些重要的特殊方法来做个简单理解，[python文档](https://docs.python.org/2/reference/datamodel.html#special-method-names)有全部方法的列表。
 
 # Special methods for Object Creation
 # 进行对象创建的特殊方法
 
 New class instances are created in a two step process using the `__new__`method to create a new instance and the `__init__` method to initialize the newly created object. Users are already familiar with defining the `__init__`method; the `__new__` method is rarely defined by the user for each class but this is possible if one wants to customize the creation of class instances.
 
+新的类实例通过两阶段过程创建，`__new__`方法创建新实例，`__init__`初始化该实例。用户已经很熟悉`__init__`方法的定义；但用户很少定义`__new__`方法，但是如果想自定义类实例的创建，也是可以的。
+
 # Special methods for Attribute access
+# 属性访问的特殊方法
 
 We can customize attribute access for class instances by implementing the following listed methods.
-    <pre>`class Account(object):
+
+我们可以通过实现以下方法来定制类实例的属性访问。
+
+    class Account(object):
         num_accounts = 0
 
         def __init__(self, name, balance):
@@ -308,21 +314,30 @@ We can customize attribute access for class instances by implementing the follow
         def type():
             return "Current Account"
 
-    x = Account('obi', 0)`</pre>
+    x = Account('obi', 0)
 
 1.  `__getattr__(self, name)__`: This method is **_only_** called when an attribute, _name_, that is referenced is neither an instance attribute nor is it found in the class tree for the object. This method should return some value for the attribute or raise an `AttributeError` exception. For example, if _x_ is an instance of the _Account_ class defined above, trying to access an attribute that does not exist will result in a call to this method.
-    <pre>`>>> acct = Account("obi", 10)
+1.  `__getattr__(self, name)__`：这个方法**_只有_**当_name_既不是实例属性也不能在对象的类继承链中找到时才会被调用。这个方法应当返回属性值或者引发`AttributeError`异常。例如，如果_x_是_Account_类的实例，尝试访问不存在的属性将会调用这个方法。
+    >>> acct = Account("obi", 10)
     >>> acct.number
-    Hey I dont see any attribute called number`</pre>
-    Note that If `__getattr__` code references instance attributes, and those attributes do not exist, an infinite loop may occur because the`__getattr__` method is called successively without end.
+    Hey I dont see any attribute called number
+Note that If `__getattr__` code references instance attributes, and those attributes do not exist, an infinite loop may occur because the`__getattr__` method is called successively without end.
+注意如果 `__getattr__`引用不存在的实例属性，可能会发生死循环，因为`__getattr__`方法不断被调用。
 2.  `__setattr__(self, name, value)__`: This method is called whenever an attribute assignment is attempted. `__setattr__` should insert the value being assigned into the dictionary of the instance attributes rather than using `self.name=value` which results in a recursive call and hence to an infinite loop.
+2. `__setattr__(self, name, value)__`：这个方法当属性赋值发生时调用。`__setattr__`将会把值插入到实例属性字典中，而不是使用`self.name=value`，因为它会导致递归调用的死循环。
 3.  `__delattr__(self, name)__`: This is called whenever `del obj` is called.
+3. `__delattr__(self, name)__`：`del obj`发生时调用。
 4.  `__getattribute__(self, name)__`: This method is **always** called to implement attribute accesses for instances of the class.
+4. `__getattribute__(self, name)__`：这个方法会被__一直__调用以实现类实例的属性访问。
 
 # Special methods for Type Emulation
+# 类型模拟的特殊方法
 
 Python defines certain special syntax for use with certain types; for example, the elements in _lists_ and _tuples_ can be accessed using the index notation`[]`, numeric values can be added with the `+` operator and so on. We can create our own classes that make use of this special syntax by implementing certain special methods that the python interpreter calls whenever it encounters such syntax. We illustrate this with a very simple example below that emulates the basics of a python _list_.
-    <pre>`class CustomList(object):
+
+对某些类型，Python定义了某些特定语法；比如，_列表_和_元组_的元素可以通过索引表示法来访问，数值可以通过`+`操作符来进行加法等等。我们可以创建自己的使用这些特殊语法的类，python解释器遇到这些特殊语法时就会调用我们实现的方法。我们在下面用一个简单的例子来演示这个特性，它模拟python_列表_的基本用法。
+
+    class CustomList(object):
 
         def __init__(self, container=None):
             # the class is just a wrapper around another list to 
@@ -359,51 +374,66 @@ Python defines certain special syntax for use with certain types; for example, t
 
         def __add__(self, otherList):
             # provides support for the use of the + operator 
-            return CustomList(self.container + otherList.container)`</pre>
+            return CustomList(self.container + otherList.container)
 
 In the above, the `CustomList` is a thin wrapper around an actual list. We have implemented some custom methods for illustration purposes:
 
+上面，`CustomList`是个真实列表的简单包装器。我们为了演示实现了一些自定义方法：
+
 1.  `__len__(self)` : This is called when the `len()` function is called on an instance of the `CustomList` as shown below:
-    <pre>`>>> myList = CustomList()    >>> myList.append(1)    >>> myList.append(2)
+1. `__len__(self)`：对`CustomList`实例调用`len()`函数时被调用。
+    >>> myList = CustomList()    
+    >>> myList.append(1)    
+    >>> myList.append(2)
     >>> myList.append(3)
     >>> myList.append(4)
     >>> len(myList)
-    4`</pre>
+    4
 2.  `__getitem__(self, value)`: provides support for the use of square bracket indexing on an instance of the CustomList class as shown below:
-    <pre>`>>> myList = CustomList()
-    >>> myList.append(1)    >>> myList.append(2)
+2.  `__getitem__(self, value)`：提供CustomList类实例的方括号索引用法支持：
+    >>> myList = CustomList()
+    >>> myList.append(1)    
+    >>> myList.append(2)
     >>> myList.append(3)
     >>> myList.append(4)
     >>> myList[3]
-    4`</pre>
+    4
 3.  `__setitem__(self, key, value)`: Called to implement the assignment of value to to self[key] on an instance of the _CustomList_ class.
-    <pre>`>>> myList = CustomList()
-    >>> myList.append(1)    >>> myList.append(2)
+3.  `__setitem__(self, key, value)`：当对_CustomList_类实例上self[key]赋值时调用。
+    >>> myList = CustomList()
+    >>> myList.append(1)    
+    >>> myList.append(2)
     >>> myList.append(3)
     >>> myList.append(4)
     >>> myList[3] = 100
     4
     >>> myList[3]
-    100`</pre>
+    100
 4.  `__contains__(self, key)`: Called to implement membership test operators. Should return true if item is in self, false otherwise.
-    <pre>`>>> myList = CustomList()
-    >>> myList.append(1)    >>> myList.append(2)
+4.  `__contains__(self, key)`：成员检测时调用。如果包含该项就返回true，否则false。
+    >>> myList = CustomList()
+    >>> myList.append(1)    
+    >>> myList.append(2)
     >>> myList.append(3)
     >>> myList.append(4)
     >>> 4 in myList
-    True`</pre>
+    True
 5.  `__repr__(self)`: Called to compute the object representation for _self_when print is called with _self_ as argument.
-    <pre>`>>> myList = CustomList()
-    >>> myList.append(1)    >>> myList.append(2)
+5.  `__repr__(self)`：当用print打印_self_时调用，将会打印_self_的对象表示。
+    >>> myList = CustomList()
+    >>> myList.append(1)    
+    >>> myList.append(2)
     >>> myList.append(3)
     >>> myList.append(4)
     >>> print myList
-    [1, 2, 3, 4]`</pre>
+    [1, 2, 3, 4]
 6.  `__add__(self, otherList)`: Called to compute the addition of two instances of CustomList when the `+` operator is used to add two instances together.
-    <pre>`>>> myList = CustomList()
+6.  `__add__(self, otherList)`：使用`+`操作符来计算两个CustomList实例相加时调用。
+    >>> myList = CustomList()
     >>> otherList = CustomList()
     >>> otherList.append(100)
-    >>> myList.append(1)    >>> myList.append(2)
+    >>> myList.append(1)    
+    >>> myList.append(2)
     >>> myList.append(3)
     >>> myList.append(4)
     >>> myList + otherList + otherList
@@ -411,8 +441,13 @@ In the above, the `CustomList` is a thin wrapper around an actual list. We hav
 
 The above provide an example of how we can customize class behavior by defining certain special class methods. For a comprehensive listing of all such custom methods, see the [python documentation](https://docs.python.org/2/reference/datamodel.html#basic-customization). In a follow-up tutorial, we put all we have discussed about special methods together and explain**descriptors**, a very important functionality that has widespread usage in python object oriented programming.
 
+上面的例子演示了如何通过定义某些特殊类方法来定制类行为。可以在[Python文档](https://docs.python.org/2/reference/datamodel.html#basic-customization)中查看这些自定义方法的完整列表。在接下来的教程中，我们会将特殊方法放到一起来讨论，并解释__描述符__这个在python面向对象编程中广泛使用的重要功能。
+
 ## Further Reading
+## 进一步阅读
 
 1.  Python Essential Reference
+1. Python核心参考
 
 2.  [Python Data Model](https://docs.python.org/2/reference/datamodel.html#)
+2. [Python数据模型](https://docs.python.org/2/reference/datamodel.html#)
