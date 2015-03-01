@@ -1,6 +1,10 @@
 Python is one of the best programming languages out there, with an extensive coverage in scientific computing: computer vision, artificial intelligence, mathematics, astronomy to name a few. Unsurprisingly, this holds true for machine learning as well.
 
+Python是最好的编程语言之一，在科学计算中用途广泛：计算机视觉、人工智能、数学、天文等。同样，对机器学习也是正确的。
+
 Of course, it has some disadvantages too; one of which is that the tools and libraries for Python are scattered. If you are a unix-minded person, this works quite conveniently as every tool does one thing and does it well. However, this also requires you to know different libraries and tools, including their advantages and disadvantages, to be able to make a sound decision for the systems that you are building. Tools by themselves do not make a system or product better, but with the right tools we can work much more efficiently and be more productive. Therefore, knowing the right tools for your work domain is crucially important.
+
+当让，它也有些缺点；其中一个是工具和库太少。如果你是unix思维的人，你可能觉得非常方便，因为每个工具只做一件事并且做得很好。但是也需要你知道不同的库和工具的优缺点，这样你在构建系统时才能做出合理的决策。工具本身不能改善系统或产品，但是使用正确的工具，我们可以工作得更高效，生产率更高。因此了解正确的工具，对你的工作领域是非常重要的。
 
 This post aims to list and describe the most useful machine learning tools and libraries that are available for Python. To make this list, we did not require the library to be written in Python; it was sufficient for it to have a Python interface. We also have a small section on Deep Learning at the end as it has received a fair amount of attention recently.
 
