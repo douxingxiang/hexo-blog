@@ -1,12 +1,21 @@
 Python has a very rich [logging](https://docs.python.org/3/library/logging.html) system. It's very easy to add structured or unstructured log output to your python code, and have it written to a file, or output to the console, or sent to syslog, or to customize the output format.
 
+Python[日志](https://docs.python.org/3/library/logging.html)系统非常丰富。添加结构化或非结构化日志输出到python代码，写到文件，输出到控制台，发送到系统日志，或者自定义输出格式都很容易。
+
 We're in the middle of re-examining how logging works in [mozharness](https://wiki.mozilla.org/ReleaseEngineering/Mozharness) to make it easier to factor-out code and have fewer [mixins](https://mgerva.wordpress.com/2015/02/25/on-mixins/).
+
+我们正在重新检查[mozharness](https://wiki.mozilla.org/ReleaseEngineering/Mozharness)中日志的工作机制，希望提取代码能更容易，并减少[mixin](https://mgerva.wordpress.com/2015/02/25/on-mixins/)。
 
 Here are a few tips and tricks that have really helped me with python logging:
 
+下面是一些在python日志中真正帮到我们的建议和技巧：
+
 ## There can be <s>only</s> more than one
+## ~~仅有一种~~有很多种
 
 Well, there can be only one logger with a given name. There is a special "root" logger with no name. Multiple `getLogger(name)` calls with the same name will return the same logger object. This is an important property because it means you don't need to explicitly pass logger objects around in your code. You can retrieve them by name if you wish. The logging module is maintaining a global registry of logging objects.
+
+好吧，对一个给定名称确实只会有一种日志。
 
 You can have multiple loggers active, each specific to its own module or even class or instance.
 
