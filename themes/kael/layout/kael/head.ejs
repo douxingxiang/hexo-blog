@@ -37,12 +37,16 @@
     <link rel="alternate" type="application/rss+xml" title="RSS" href="<%- config.feed.path %>">
   <% } %>
 
-  <% if (config.cloudfrontanalytics) { %>
-  <script type="text/javascript">
-    var analytics=analytics||[];(function(){var e=["identify","track","trackLink","trackForm","trackClick","trackSubmit","page","pageview","ab","alias","ready","group"],t=function(e){return function(){analytics.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var n=0;n<e.length;n++)analytics[e[n]]=t(e[n])})(),analytics.load=function(e){var t=document.createElement("script");t.type="text/javascript",t.async=!0,t.src=("https:"===document.location.protocol?"https://":"http://")+"d2dq2ahtl5zl1z.cloudfront.net/analytics.js/v1/"+e+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(t,n)};
-    analytics.load("uj8ix0aatc");
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?74c21c7a645be009cb17f53a6b4cf9a5";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
   </script>
-  <% } %>
+
 
 </head>
 <body>
@@ -52,15 +56,15 @@
         <nav id="mp-menu" class="mp-menu">
             <div class="mp-level">
                 <a data-pjax class="back-home" style="font-size: 20px" href="<%- config.root %>"><h2 ><i class="fa fa-home"></i>
-                        Home</h2></a>
+                        首页</h2></a>
                 <ul class="first-level">
                     <li>
                         <a class="fa fa-archive" href="#"><i class="fa fa-angle-left">
-                            </i>&nbsp;&nbsp;Archive</a>
+                            </i>&nbsp;&nbsp;归档</a>
                         <div class="mp-level page-list">
                             <h2 ><i class="fa fa-archive"></i>
-                                Archive</h2>
-                            <a class="mp-back" href="#">back</a>
+                                归档</h2>
+                            <a class="mp-back" href="#">返回</a>
                             <form id="search-form" action="">
                                 <input type="text" class="search search-archive" placeholder="Search.."/>
                             </form>
@@ -77,12 +81,12 @@
                     </li>
                     <li>
                         <a class="fa fa-copy" href="#"><i class="fa fa-angle-left">
-                            </i>&nbsp;&nbsp;Categories</a>
+                            </i>&nbsp;&nbsp;分类</a>
 
                         <div class="mp-level page-list">
                             <h2 ><i class="fa fa-copy"></i>
-                                Categories</h2>
-                            <a class="mp-back" href="#">back</a>
+                                分类</h2>
+                            <a class="mp-back" href="#">返回</a>
                             <form id="search-form" action="">
                                 <input type="text" class="search search-category" placeholder="Search.."/>
                             </form>
@@ -100,11 +104,11 @@
                     </li>
                     <li>
                         <a class="fa fa-tags" href="#"><i class="fa fa-angle-left">
-                            </i>&nbsp;&nbsp;Tags</a>
+                            </i>&nbsp;&nbsp;标签</a>
                         <div class="mp-level page-list">
                             <h2 ><i class="fa fa-tags"></i>
-                                Tags</h2>
-                            <a class="mp-back" href="#">back</a>
+                                标签</h2>
+                            <a class="mp-back" href="#">返回</a>
                             <form id="search-form" action="">
                                 <input type="text" class="search search-tag" placeholder="Search.."/>
                             </form>
@@ -127,13 +131,11 @@
                         <div class="mp-level page-list">
                             <h2 ><i class="fa fa-weibo"></i>
                                 Weibo Show</h2>
-                            <a class="mp-back" href="#">back</a>
+                            <a class="mp-back" href="#">返回</a>
                         </div>
                     </li>
                     <% } %>
-                    <li class="mp-pjax"><a class="fa fa-user" href="<%= config.root %>about">&nbsp;&nbsp;&nbsp;About me</a></li>
-                    <li><a class="fa fa-github" href="#">&nbsp;&nbsp;&nbsp;Github</a></li>
-
+                    <li class="mp-pjax"><a class="fa fa-user" href="<%= config.root %>about">&nbsp;&nbsp;&nbsp;关于</a></li>
                 </ul>
 
             </div>
