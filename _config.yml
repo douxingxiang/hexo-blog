@@ -87,5 +87,5 @@ exclude_generator:
 deploy:
   type: git
   repo: https://github.com/douxingxiang/douxingxiang.github.io.git
-  branch: gh-pages
+  branch: master
   message: 
