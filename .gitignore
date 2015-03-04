@@ -4,5 +4,6 @@ db.json
 debug.log
 node_modules/
 .deploy_git/
-public/
+public/*
+!public/index.html
 .deploy
