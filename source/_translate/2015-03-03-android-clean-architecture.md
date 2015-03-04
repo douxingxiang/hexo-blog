@@ -1,67 +1,110 @@
 Over the last months and after having friendly discussions at [Tuenti](http://corporate.tuenti.com/en/dev/blog) with colleagues like[@pedro_g_s](https://twitter.com/pedro_g_s) and [@flipper83](https://twitter.com/flipper83) (by the way 2 badass of android development), I have decided that was a good time to write an article about architecting android applications.
  The purpose of it is to show you a little approach I had in mind in the last few months plus all the stuff I have learnt from investigating and implementing it.
 
+过去几个月，在与我[Tuenti](http://corporate.tuenti.com/en/dev/blog)的几位同事进行友好交流之后，其中有[@pedro_g_s](https://twitter.com/pedro_g_s)和[@flipper83](https://twitter.com/flipper83)（他们都是android开发的牛人），我认为是时候写篇关于架构androi应用的文章了。这篇文章的目的是介绍近几个月来我所想到的一些方法，以及从调查和实践中学到的东西。
+
+
 ### Getting Started
+### 开始
 
 We know that writing quality software is hard and complex: It is not only about satisfying requirements, also should be robust, maintainable, testable, and flexible enough to adapt to growth and change. This is where “the clean architecture” comes up and could be a good approach for using when developing any software application.
  The idea is simple: clean architecture stands for a group of practices that produce systems that are:
 
-*   Independent of Frameworks.
-*   Testable.
-*   Independent of UI.
-*   Independent of Database.
-*   Independent of any external agency.
+我们知道编写高质量软件是既困难又复杂：不仅是满足需求方面，还要健壮、可维护、可测试，并且足够灵活以适应增长和变更。这就是“简介架构”的来源，并可以成为开发任何软件应用的良好方法。思想很简单：简洁架构代表构建系统的一组这样的实践：
 
-[![](http://fernandocejas.com/wp-content/uploads/2014/09/clean_architecture1.png)](http://fernandocejas.com/wp-content/uploads/2014/09/clean_architecture1.png)
+*   Independent of Frameworks.
+*   独立于框架。
+*   Testable.
+*   可测试。
+*   Independent of UI.
+*   独立于UI。
+*   Independent of Database.
+*   独立于数据库。
+*   Independent of any external agency.
+*   独立于任何外部代理。
+
+[![clean architecture 1](http://fernandocejas.com/wp-content/uploads/2014/09/clean_architecture1.png)](http://fernandocejas.com/wp-content/uploads/2014/09/clean_architecture1.png)
 
 It is not a must to use only 4 circles (as you can see in the picture), because they are only schematic but you should take into consideration the Dependency Rule: source code dependencies can only point inwards and nothing in an inner circle can know anything at all about something in an outer circle.
 
+使用图示中的4个圆圈并不是必须，因为这只是语义描述，你还要考虑依赖规则（the Dependency Rule）：源码依赖只应该指向内圈，内圈不应该知道外圈的任何东西。
+
 Here is some vocabulary that is relevant for getting familiar and understanding this approach in a better way:
 
+下面的相关词汇可以帮助熟悉理解这个方法：
+
 *   Entities: These are the business objects of the application.
+*   实体（Entities）：应用的逻辑对象。
 *   Use Cases: These use cases orchestrate the flow of data to and from the entities. Are also called Interactors.
+*   用例（Use Cases）：用例编排数据流从实体的流入和流出。也叫交互器（Interactor）。
 *   Interface Adapters: This set of adapters convert data from the format most convenient for the use cases and entities. Presenters and Controllers belong here.
+*   接口适配器（Interface Adapters）：这些适配器将数据转换为用例和实体最合适的格式。表示器（Presenter）和控制器（Controller）就位于这里。
 *   Frameworks and Drivers: This is where all the details go: UI, tools, frameworks, etc.
+*   框架和驱动器（Frameworks and Drivers）：这是所有细节集中的地方，UI、工具、框架等。
 
 For a better and more extensive explanation, refer to [this article](http://blog.8thlight.com/uncle-bob/2012/08/13/the-clean-architecture.html) or [this video](http://vimeo.com/43612849).
 
+为了更好更深入地理解，看下[这篇文章](http://blog.8thlight.com/uncle-bob/2012/08/13/the-clean-architecture.html)或者[这个视频](http://vimeo.com/43612849)。
+
 ### Our Scenario
+### 我们的情形
 
 I will start with a simple scenario to get things going: simply create an small app that shows a list of friends or users retrieved from the cloud and, when clicking any of them, a new screen will be opened showing more details of that user.
  I leave you a video so you can have the big picture of what I’m talking about:
 
+我用一个简单的情形来描述事情过程：创建一个小应用，显示从云中获取的朋友或用户列表，点击其中任意一个，将会打开新窗口来显示用户的更多信息。我放一个视频来帮助理解我所说的大致过程：
+
+[引入的视频，需翻墙](https://www.youtube.com/watch?v=XSjV4sG3ni0)
+
 ### Android Architecture
+### Android架构
 
 The objective is the separation of concerns by keeping the business rules not knowing anything at all about the outside world, thus, they can can be tested without any dependency to any external element.
  To achieve this, my proposal is about breaking up the project into 3 different layers, in which each one has its own purpose and works separately from the others.
  It is worth mentioning that each layer uses its own data model so this independence can be reached (you will see in code that a data mapper is needed in order to accomplish data transformation, a price to be paid if you do not want to cross the use of your models over the entire application).
  Here is an schema so you can see how it looks like:
 
+目标是通过将业务规则与外部世界隔离来分离关注点，这样，才可以在不依赖外部元素的情况下测试业务规则。为了达到这个目标，我的建议是将项目拆分为3个不同的层，每层都有自己的目标，独立地工作。需要提及的是每层都使用自己的数据模型，这样才可以取得依赖（你可以看到，在代码中需要数据映射器(data mapper)来完成数据转换，不想在整个应用之上交叉使用自己的模型总要付出点代价）。下面是一些模式：
+
 [![clean_architecture_android](http://fernandocejas.com/wp-content/uploads/2014/09/clean_architecture_android.png)](http://fernandocejas.com/wp-content/uploads/2014/09/clean_architecture_android.png)
 
 NOTE: I did not use any external library (except gson for parsing json data and junit, mockito, robolectric and espresso for testing). The reason was because it made the example a bit more clear. Anyway do not hesitate to add ORMs for storing disk data or any dependency injection framework or whatever tool or library you are familiar with, that could make your life easier.(Remember that reinventing the wheel is not a good practice).
 
+注意：我没有使用任何外部库（除了解析json数据的gson，还有测试用的junit, mockito, robolectri和espresso）。原因是例子会更清楚。无论如何，让生活更美好的东西，比如添加ORM来存储磁盘数据，或者任何依赖注入框架，或者任何你熟悉的工具或库，一定不要犹豫。（记住重新发明轮子不是一个号的实践）。
+
 #### Presentation Layer
+#### 显示层
 
 Is here, where the logic related with views and animations happens. It uses no more than aModel View Presenter ([MVP](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93presenter) from now on), but you can use any other pattern like MVC or MVVM. I will not get into details on it, but here fragments and activities are only views, there is no logic inside them other than UI logic, and this is where all the rendering stuff takes place.
  Presenters in this layer are composed with interactors (use cases) that perform the job in a new thread outside the android UI thread, and come back using a callback with the data that will be rendered in the view.
+
+ 这里是与视图和动画有关的逻辑所处的位置。它只使用一个模型-视图-表示器（Model View Presenter, 下文称[MVP](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93presenter)），但是你可以使用其他任何模式，如MVC或MVVM。我不会深入介绍，这里的片段和活动只有视图，除了UI逻辑之外没有任何其他逻辑，这也是所有渲染发生的地方。这层中的表示器与交互器（用例）共同在android UI线程之外的新线程中执行这些工作，通过回调来处理数据，数据将在视图中渲染。
 
 [![clean_architecture_mvp](http://fernandocejas.com/wp-content/uploads/2014/09/clean_architecture_mvp.png)](http://fernandocejas.com/wp-content/uploads/2014/09/clean_architecture_mvp.png)
 
 If you want a cool example about [Effective Android UI](https://github.com/pedrovgs/EffectiveAndroidUI/) that uses MVP and MVVM, take a look at what my friend Pedro Gómez has done.
 
+如何你想要一个使用MVP和MVVM，关于[高效Android UI](https://github.com/pedrovgs/EffectiveAndroidUI/)更酷的例子，去看看我朋友Pedro Gómez所做的工作。
+
 #### Domain Layer
+#### 领域层
 
 Business rules here: all the logic happens in this layer. Regarding the android project, you will see all the interactors (use cases) implementations here as well.
  This layer is a pure java module without any android dependencies. All the external components use interfaces when connecting to the business objects.
 
+这里的业务规则：所有逻辑都在这层。至于android项目，你也将会看到所有的交互器（用例）实现。这层是无android依赖的纯java模块。所有的外部组件使用接口连接到业务对象。
+
 [![clean_architecture_domain](http://fernandocejas.com/wp-content/uploads/2014/09/clean_architecture_domain.png)](http://fernandocejas.com/wp-content/uploads/2014/09/clean_architecture_domain.png)
 
 #### Data Layer
+#### 数据层
+
 
 All data needed for the application comes from this layer through a UserRepository implementation (the interface is in the domain layer) that uses a [Repository Pattern](http://martinfowler.com/eaaCatalog/repository.html) with a strategy that, through a factory, picks different data sources depending on certain conditions.
  For instance, when getting a user by id, the disk cache data source will be selected if the user already exists in cache, otherwise the cloud will be queried to retrieve the data and later save it to the disk cache.
  The idea behind all this is that the data origin is transparent for the client, which does not care if the data is coming from memory, disk or the cloud, the only truth is that the data will arrive and will be got.
+
+应用需要的全部数据都来自这层，数据
 
 [![clean_architecture_data](http://fernandocejas.com/wp-content/uploads/2014/09/clean_architecture_data.png)](http://fernandocejas.com/wp-content/uploads/2014/09/clean_architecture_data.png)
 
