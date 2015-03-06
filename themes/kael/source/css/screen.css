@@ -47,8 +47,8 @@ html {
 
 body {
     height: 100%;
-    font-family: 'Open Sans', 'Microsoft YaHei', 'LantingHei SC', 'Droid Sans Fallback',
-    'Helvetica Neue','Helvetica',Arial,'Hiragino Sans GB','SimSun',,sans-serif;
+    font-family: "Microsoft YaHei", "LantingHei SC", "Droid Sans Fallback", "Open Sans",
+    "Helvetica Neue","Helvetica",Arial,"Hiragino Sans GB","SimSun",sans-serif;
     font-size: 2.0rem;
     line-height: 1.6em;
     color: #3A4145;
@@ -72,8 +72,8 @@ h4, h5, h6 {
     text-rendering: optimizeLegibility;
     line-height: 1;
     margin-top: 0;
-    font-family: 'Open Sans', 'Microsoft YaHei', 'LantingHei SC', 'Droid Sans Fallback',
-    'Helvetica Neue','Helvetica',Arial,'Hiragino Sans GB','SimSun',,sans-serif;
+    font-family: "Microsoft YaHei", "LantingHei SC", "Droid Sans Fallback", "Open Sans",
+    "Helvetica Neue","Helvetica",Arial,"Hiragino Sans GB","SimSun",sans-serif;
     font-weight: 400;
 }
 
@@ -361,7 +361,8 @@ margin on the iframe, cause it breaks stuff. */
     font-size: 5rem;
     letter-spacing: -1px;
     font-weight: bold;
-    font-family: 'Open Sans', sans-serif;
+    font-family: "Microsoft YaHei", "LantingHei SC", "Droid Sans Fallback", "Open Sans",
+    "Helvetica Neue","Helvetica",Arial,"Hiragino Sans GB","SimSun",sans-serif;
     text-shadow: 0 1px 6px rgba(0,0,0,0.1);
 }
 
@@ -878,7 +879,8 @@ pre .chunk {
     margin: 8rem 0 0 0;
     padding: 4rem 0;
     border-top: #EBF2F6 1px solid;
-    font-family: 'Open Sans', sans-serif;
+    font-family: "Microsoft YaHei", "LantingHei SC", "Droid Sans Fallback", "Open Sans",
+    "Helvetica Neue","Helvetica",Arial,"Hiragino Sans GB","SimSun",sans-serif;;
     font-size: 1.3rem;
     line-height: 1.7em;
     color: #BBC7CC;

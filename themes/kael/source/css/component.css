@@ -180,7 +180,8 @@ html, body, .container, .scroller, #pjax {
     text-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
     font-weight: 300;
     font-size: 2em;
-    font-family: 'Open Sans', sans-serif;
+    font-family: "Microsoft YaHei", "LantingHei SC", "Droid Sans Fallback", "Open Sans",
+    "Helvetica Neue","Helvetica",Arial,"Hiragino Sans GB","SimSun",sans-serif;;
 }
 
 .mp-menu.mp-overlap h2::before {
@@ -257,7 +258,8 @@ div[data-level='2'] a {
 
 div[data-level='1'] a {
     font-size: 22px;
-    font-family: 'Open Sans', 'FontAwesome', sans-serif;
+    font-family: "Microsoft YaHei", "LantingHei SC", "Droid Sans Fallback", "Open Sans",
+    "Helvetica Neue","Helvetica",Arial,"Hiragino Sans GB","SimSun",sans-serif;;
     font-weight: 500;
 }
 
@@ -347,7 +349,8 @@ div[data-level='1'] a {
     list-style: none;
     text-transform: none;
     font-weight: 300;
-    font-family: 'Open Sans', Arial,'Microsoft YaHei', sans-serif;
+    font-family: "Microsoft YaHei", "LantingHei SC", "Droid Sans Fallback", "Open Sans",
+    "Helvetica Neue","Helvetica",Arial,"Hiragino Sans GB","SimSun",sans-serif;
     line-height: 65px;
     z-index: 9999;
 }

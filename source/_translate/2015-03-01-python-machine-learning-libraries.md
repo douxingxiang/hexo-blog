@@ -1,10 +1,10 @@
 Python is one of the best programming languages out there, with an extensive coverage in scientific computing: computer vision, artificial intelligence, mathematics, astronomy to name a few. Unsurprisingly, this holds true for machine learning as well.
 
-Python是最好的编程语言之一，在科学计算中用途广泛：计算机视觉、人工智能、数学、天文等。同样，对机器学习也是正确的。
+Python是最好的编程语言之一，在科学计算中用途广泛：计算机视觉、人工智能、数学、天文等。它同样适用于机器学习也是意料之中的事。。
 
 Of course, it has some disadvantages too; one of which is that the tools and libraries for Python are scattered. If you are a unix-minded person, this works quite conveniently as every tool does one thing and does it well. However, this also requires you to know different libraries and tools, including their advantages and disadvantages, to be able to make a sound decision for the systems that you are building. Tools by themselves do not make a system or product better, but with the right tools we can work much more efficiently and be more productive. Therefore, knowing the right tools for your work domain is crucially important.
 
-当让，它也有些缺点；其中一个是工具和库太少。如果你是unix思维（unix-minded）的人，你可能觉得非常方便，因为每个工具只做一件事并且做得很好。但是你也需要知道不同库和工具的优缺点，这样在构建系统时才能做出合理的决策。工具本身不能改善系统或产品，但是使用正确的工具，我们可以工作得更高效，生产率更高。因此了解正确的工具，对你的工作领域是非常重要的。
+当然，它也有些缺点；其中一个是工具和库过于分散。如果你是拥有unix思维（unix-minded）的人，你会觉得每个工具只做一件事并且把它做好是非常方便的。但是你也需要知道不同库和工具的优缺点，这样在构建系统时才能做出合理的决策。工具本身不能改善系统或产品，但是使用正确的工具，我们可以工作得更高效，生产率更高。因此了解正确的工具，对你的工作领域是非常重要的。
 
 This post aims to list and describe the most useful machine learning tools and libraries that are available for Python. To make this list, we did not require the library to be written in Python; it was sufficient for it to have a Python interface. We also have a small section on Deep Learning at the end as it has received a fair amount of attention recently.
 
@@ -12,11 +12,11 @@ This post aims to list and describe the most useful machine learning tools and l
 
 We do not aim to list **all** the machine learning libraries available in Python (the Python package index returns 139 results for “machine learning”) but rather the ones that we found useful and well-maintained to the best of our knowledge. Moreover, although some of modules could be used for various machine learning tasks, we included libraries whose main focus is machine learning. For example, although [Scipy](http://docs.scipy.org/doc/scipy/reference/index.html) has some [clustering algorithms](http://docs.scipy.org/doc/scipy/reference/cluster.vq.html#module-scipy.cluster.vq), the main focus of this module is not machine learning but rather in being a comprehensive set of tools for scientific computing. Therefore, we excluded libraries like Scipy from our list (though we use it too!).
 
-我们的目的不是列出Python中__所有__机器学习库（搜索“机器学些”时Python包索引(PyPI)返回了139个结果），而是列出我们所知的有用并且维护良好的那些。另外，尽管有些模块可以用于多种机器学习任务，我们只列出主要焦点在机器学习的库。比如，虽然[Scipy](http://docs.scipy.org/doc/scipy/reference/index.html)包含一些[聚类算法](http://docs.scipy.org/doc/scipy/reference/cluster.vq.html#module-scipy.cluster.vq)，但是它的主焦点不是机器学习而是全面的科学计算工具集。因此我们排除了Scipy（尽管我们也使用它！）。
+我们的目的不是列出Python中__所有__机器学习库（搜索“机器学习”时Python包索引(PyPI)返回了139个结果），而是列出我们所知的有用并且维护良好的那些。另外，尽管有些模块可以用于多种机器学习任务，我们只列出主要焦点在机器学习的库。比如，虽然[Scipy](http://docs.scipy.org/doc/scipy/reference/index.html)包含一些[聚类算法](http://docs.scipy.org/doc/scipy/reference/cluster.vq.html#module-scipy.cluster.vq)，但是它的主焦点不是机器学习而是全面的科学计算工具集。因此我们排除了Scipy（尽管我们也使用它！）。
 
 Another thing worth mentioning is that we also evaluated the library based on how it integrates with other scientific computing libraries because machine learning (either supervised or unsupervised) is part of a data processing system. If the library that you are using does not fit with your rest of data processing system, then you may find yourself spending a tremendous amount of time to creating intermediate layers between different libraries. It is important to have a great library in your toolset but it is also important for that library to integrate well with other libraries.
 
-另一个需要提到的是，我们同时也根据与其他科学计算库的集成来评估，因为机器学习（有监督的或者无监督的）也是数据处理系统的一部分。如果你使用的库不符合数据处理系统的其他部分，你就要花大量时间创建不同库之间的中间层。在工具集中有个很棒的库很重要，但这个库能与其他库良好集成也同样重要。
+另一个需要提到的是，我们同样会根据与其他科学计算库的集成效果来评估这些库，因为机器学习（有监督的或者无监督的）也是数据处理系统的一部分。如果你使用的库与数据处理系统其他的库不相配，你就要花大量时间创建不同库之间的中间层。在工具集中有个很棒的库很重要，但这个库能与其他库良好集成也同样重要。
 
 If you are great in another language but want to use Python packages, we also briefly go into how you could integrate with Python to use the libraries listed in the post.
 
@@ -26,11 +26,11 @@ If you are great in another language but want to use Python packages, we also br
 
 [Scikit Learn](http://scikit-learn.org/stable/) is our machine learning tool of choice at CB Insights. We use it for classification, feature selection, feature extraction and clustering. What we like most about it is that it has a consistent API which is easy to use while also providing **a lot of** evaluation, diagnostic and cross-validation methods out of the box (sound familiar? Python has batteries-included approach as well). The icing on the cake is that it uses Scipy data structures under the hood and fits quite well with the rest of scientific computing in Python with Scipy, Numpy, Pandas and Matplotlib packages. Therefore, if you want to visualize the performance of your classifiers (say, using a precision-recall graph or Receiver Operating Characteristics (ROC) curve) those could be quickly visualized with help of Matplotlib. Considering how much time is spent on cleaning and structuring the data, this makes it very convenient to use the library as it tightly integrates to other scientific computing packages.
 
-[Scikit Learn](http://scikit-learn.org/stable/)是我们在CB Insights选用的机器学习工具。我们用它进行分类、特征选择、特征提取和聚集。我们最爱的一点是它易用的一致性API提供了__很多__开箱可用的求值、诊断和交叉验证方法。锦上添花的是它底层使用Scipy数据结构，与其余Python中使用Scipy、Numpy、Pandas和Matplotlib进行科学计算的部分适应地很好。
+[Scikit Learn](http://scikit-learn.org/stable/)是我们在CB Insights选用的机器学习工具。我们用它进行分类、特征选择、特征提取和聚集。我们最爱的一点是它拥有易用的一致性API，并提供了__很多__开箱可用的求值、诊断和交叉验证方法（是不是听起来很熟悉？Python也提供了“电池已备(译注：指开箱可用)”的方法）。锦上添花的是它底层使用Scipy数据结构，与Python中其余使用Scipy、Numpy、Pandas和Matplotlib进行科学计算的部分适应地很好。因此，如果你想可视化分类器的性能（比如，使用精确率与反馈率(precision-recall)图表，或者接收者操作特征(Receiver Operating Characteristics，ROC)曲线），Matplotlib可以帮助进行快速可视化。考虑到花在清理和构造数据的时间，使用这个库会非常方便，因为它可以紧密集成到其他科学计算包上。
 
 Moreover, it has also limited Natural Language Processing feature extraction capabilities as well such as bag of words, tfidf, preprocessing (stop-words, custom preprocessing, analyzer). Moreover, if you want to quickly perform different benchmarks on toy datasets, it has a datasets module which provides common and useful datasets. You could also build toy datasets from these datasets for your own purposes to see if your model performs well before applying the model to the real-world dataset. For parameter optimization and tuning, it also provides grid search and random search. These features could not be accomplished if it did not have great community support or if it was not well-maintained. We look forward to its first stable release.
 
-另外，它还包含有限的自然语言处理特征提取能力，以及词袋（bag of words）、tfidf（Term Frequency Inverse Document Frequency算法）、预处理（停用词/stop-words，自定义预处理，分析器）。此外，如果你想快速对测试用数据集进行不同基准测试的话，它自带的数据集模块提供了常见和有用的数据集。你还可以根据这些数据集创建自己的测试用数据集，这样在将模型应用到真实世界中之前，你可以按照自己的目的来检验模型是否符合期望。对参数最优化和参数调整，它也提供了网格搜索和随机搜索。如果没有强大的社区支持，或者维护得不好，这些特性都不可能实现。我们期盼它的第一个稳定发布版。
+另外，它还包含有限的自然语言处理特征提取能力，以及词袋（bag of words）、tfidf（Term Frequency Inverse Document Frequency算法）、预处理（停用词/stop-words，自定义预处理，分析器）。此外，如果你想快速对小数据集（toy dataset）进行不同基准测试的话，它自带的数据集模块提供了常见和有用的数据集。你还可以根据这些数据集创建自己的小数据集，这样在将模型应用到真实世界中之前，你可以按照自己的目的来检验模型是否符合期望。对参数最优化和参数调整，它也提供了网格搜索和随机搜索。如果没有强大的社区支持，或者维护得不好，这些特性都不可能实现。我们期盼它的第一个稳定发布版。
 
 ## [Statsmodels](https://github.com/cbinsights/projects/blob/master/bugra/posts/python-tools-for-ml.md#statsmodels)
 
@@ -101,7 +101,7 @@ There is another library built on top of Theano, called [PyLearn2](http://deepl
 
 If you want to use excellent Scikit-learn library api in deep learning as well, [Nolearn](http://packages.python.org/nolearn/) wraps Decaf to make the life easier for you. It is a wrapper on top of Decaf and it is compatible(mostly) with Scikit-learn, which makes Decaf even more awesome.
 
-如果你想在深度学习中也能使用优秀的Scikit-learn库API，封装了Decaf的[Nolearn](http://packages.python.org/nolearn/)会让你感觉生活很美好。它是对Decaf的包装，与Scikit-learn兼容（大部分），使得Decaf更不可思议。
+如果你想在深度学习中也能使用优秀的Scikit-learn库API，封装了Decaf的[Nolearn](http://packages.python.org/nolearn/)会让你能够更轻松地使用它。它是对Decaf的包装，与Scikit-learn兼容（大部分），使得Decaf更不可思议。
 
 #### [OverFeat](https://github.com/cbinsights/projects/blob/master/bugra/posts/python-tools-for-ml.md#overfeat)
 
