@@ -2,7 +2,7 @@
 
 [事件驱动编程](http://en.wikipedia.org/wiki/Event-driven_programming)（event-driven programming）是种编程范型，程序执行流由事件决定，比如用户交互，其他程序的消息等。常用于响应用户输入的系统，比如图形用户界面，web应用。
 
-### 关键词：主循环
+### 关键词：主循环，event loop,message queue
 
 事件驱动的应用，通常都有一个主循环（main loop）来监听事件，检测到事件触发回调。嵌入系统中，也已通过硬件中断来实现主循环的功能。
 主循环/主事件循环/主消息循环是中等待并派发事件/消息的编程结构。它会请求内部或外部__事件提供者（event provider）__，然后调用相关__事件处理器（event handler）__。
@@ -22,3 +22,9 @@
 与事件循环相对的设计：
 1. 传统程序，只简单地运行一次，比如常见的命令行程序。
 2. 菜单驱动程序，虽然可能包含主循环，但是交互性有限。
+
+### 中断，interruput, 轮询，polling
+### 异步，asynchronous, 同步，synchronous, 阻塞blocking
+### 进程间通信，inter-process communication, ipc
+### 事件循环, event loop
+### 事件模型，
