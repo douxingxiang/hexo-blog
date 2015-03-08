@@ -210,23 +210,23 @@ The advantage of optional properties is that you can describe these possibly ava
 
 可选属性的优势是，你可以描述这些可能出现的属性，同时也能捕获你不期望出现的属性。比如，我们拼错传给`createSquare`的属性名，我们可以得到一个错误消息：
 
-  interface SquareConfig {
-    color?: string;
-    width?: number;
-  }
-
-  function createSquare(config: SquareConfig): {color: string; area: number} {
-    var newSquare = {color: "white", area: 100};
-    if (config.color) {
-      newSquare.color = config.collor;  // 类型检查器可以在这里捕获拼错的名字
+    interface SquareConfig {
+      color?: string;
+      width?: number;
     }
-    if (config.width) {
-      newSquare.area = config.width * config.width;
-    }
-    return newSquare;
-  }
 
-  var mySquare = createSquare({color: "black"});  
+    function createSquare(config: SquareConfig): {color: string; area: number} {
+      var newSquare = {color: "white", area: 100};
+      if (config.color) {
+        newSquare.color = config.collor;  // 类型检查器可以在这里捕获拼错的名字
+      }
+      if (config.width) {
+        newSquare.area = config.width * config.width;
+      }
+      return newSquare;
+    }
+
+    var mySquare = createSquare({color: "black"});  
 
 ## Function Types
 ## 函数类型
@@ -239,39 +239,39 @@ To describe a function type with an interface, we give the interface a call sign
 
 要用接口来描述函数类型，我们需要给接口一个调用签名。它就像函数声明，但只有参数列表和返回类型。
 
-  interface SearchFunc {
-    (source: string, subString: string): boolean;
-  }
+    interface SearchFunc {
+      (source: string, subString: string): boolean;
+    }
 
 Once defined, we can use this function type interface like we would other interfaces. Here, we show how you can create a variable of a function type and assign it a function value of the same type.
 
 一旦定义，我们就可以像其他接口一样使用函数类型接口。这里，我们演示如何创建一个函数类型的变量，然后给它赋值一个相同类型的函数值。
 
-  var mySearch: SearchFunc;
-  mySearch = function(source: string, subString: string) {
-    var result = source.search(subString);
-    if (result == -1) {
-      return false;
+    var mySearch: SearchFunc;
+    mySearch = function(source: string, subString: string) {
+      var result = source.search(subString);
+      if (result == -1) {
+        return false;
+      }
+      else {
+        return true;
+      }
     }
-    else {
-      return true;
-    }
-  }
 
 For function types to correctly type-check, the name of the parameters do not need to match. We could have, for example, written the above example like this:
 
 对于函数类型的类型检查，参数名字没必要与声明匹配。比如，我们可以这样写上面的例子：
 
-  var mySearch: SearchFunc;
-  mySearch = function(src: string, sub: string) {
-    var result = src.search(sub);
-    if (result == -1) {
-      return false;
+    var mySearch: SearchFunc;
+    mySearch = function(src: string, sub: string) {
+      var result = src.search(sub);
+      if (result == -1) {
+        return false;
+      }
+      else {
+        return true;
+      }
     }
-    else {
-      return true;
-    }
-  }
 
 Function parameters are checked one at a time, with the type in each corresponding parameter position checked against each other. Here, also, the return type of our function expression is implied by the values it returns (here _false_ and _true_). Had the function expression returned numbers or strings, the type-checker would have warned us that return type doesn't match the return type described in the SearchFunc interface.
 
@@ -284,12 +284,12 @@ Similarly to how we can use interfaces to describe function types, we can also d
 
 与使用接口描述函数类型类似，我们也可以描述数组类型。数组类型有个描述所能用于索引数组的类型`index`类型，还有访问索引的对应返回类型。
 
-  interface StringArray {
-    [index: number]: string;
-  }
+    interface StringArray {
+      [index: number]: string;
+    }
 
-  var myArray: StringArray;
-  myArray = ["Bob", "Fred"];
+    var myArray: StringArray;
+    myArray = ["Bob", "Fred"];
 
 There are two types of supported index types: string and number. It is possible to support both types of index, with the restriction that the type returned from the numeric index must be a subtype of the type returned from the string index.
 
@@ -299,10 +299,10 @@ While index signatures are a powerful way to describe the array and 'dictionary'
 
 虽然索引签名是个强大的描述数组和“字典”模式的方式，它们同时强制所有属性匹配其返回类型。本例中，属性不匹配更一般化的索引，类型检查器给出了一个错误：
 
-  interface Dictionary {
-    [index: string]: string;
-    length: number;    // 错误，“length”类型不是索引的子类型
-  } 
+    interface Dictionary {
+      [index: string]: string;
+      length: number;    // 错误，“length”类型不是索引的子类型
+    } 
 
 ## Class Types
 ## 类类型
@@ -314,31 +314,31 @@ One of the most common uses of interfaces in languages like C# and Java, that of
 
 在类似C#和Java这些语言中，接口最常见的用法（显式要求类满足特定的合约）在TypeScript也同样支持。
 
-  interface ClockInterface {
-      currentTime: Date;
-  }
+    interface ClockInterface {
+        currentTime: Date;
+    }
 
-  class Clock implements ClockInterface  {
-      currentTime: Date;
-      constructor(h: number, m: number) { }
-  }
+    class Clock implements ClockInterface  {
+        currentTime: Date;
+        constructor(h: number, m: number) { }
+    }
 
 You can also describe methods in an interface that are implemented in the class, as we do with 'setTime' in the below example:
 
 你可以在类中实现接口的方式描述方法，就像下面例子中`setTime`：
 
-  interface ClockInterface {
-      currentTime: Date;
-      setTime(d: Date);
-  }
+    interface ClockInterface {
+        currentTime: Date;
+        setTime(d: Date);
+    }
 
-  class Clock implements ClockInterface  {
-      currentTime: Date;
-      setTime(d: Date) {
-          this.currentTime = d;
-      }
-      constructor(h: number, m: number) { }
-  }
+    class Clock implements ClockInterface  {
+        currentTime: Date;
+        setTime(d: Date) {
+            this.currentTime = d;
+        }
+        constructor(h: number, m: number) { }
+    }
 
 Interfaces describe the public side of the class, rather than both the public and private side. This prohibits you from using them to check that a class also has particular types for the private side of the class instance.
 
@@ -351,14 +351,14 @@ When working with classes and interfaces, it helps to keep in mind that a class 
 
 处理类和接口时，需要记住类有_两种_类型：静态的和实例的。你可能注意到了，如果你使用构造器签名来创建一个接口，然后尝试创建一个类来实现这个接口时，就会得到一个错误：
 
-  interface ClockInterface {
-      new (hour: number, minute: number);
-  }
+    interface ClockInterface {
+        new (hour: number, minute: number);
+    }
 
-  class Clock implements ClockInterface  {
-      currentTime: Date;
-      constructor(h: number, m: number) { }
-  }
+    class Clock implements ClockInterface  {
+        currentTime: Date;
+        constructor(h: number, m: number) { }
+    }
 
 This is because when a class implements an interface, only the instance side of the class is checked. Since the constructor sits in the static side, it is not included in this check.
 
@@ -368,17 +368,17 @@ Instead, you would need to work with the 'static' side of the class directly. In
 
 相反，你需要直接处理类的“静态”部分。本例中，我们直接处理类：
 
-  interface ClockStatic {
-      new (hour: number, minute: number);
-  }
+    interface ClockStatic {
+        new (hour: number, minute: number);
+    }
 
-  class Clock  {
-      currentTime: Date;
-      constructor(h: number, m: number) { }
-  }
+    class Clock  {
+        currentTime: Date;
+        constructor(h: number, m: number) { }
+    }
 
-  var cs: ClockStatic = Clock;
-  var newClock = new cs(7, 30);
+    var cs: ClockStatic = Clock;
+    var newClock = new cs(7, 30);
 
 ## Extending Interfaces
 ## 扩展接口
@@ -387,38 +387,38 @@ Like classes, interfaces can extend each other. This handles the task of copying
 
 与类相似，接口也可以相互扩展。这会处理将一个接口中的成员拷贝到另一个这种任务，给予你更大自由来将接口抽取到可重用组件。
 
-  interface Shape {
-      color: string;
-  }
+    interface Shape {
+        color: string;
+    }
 
-  interface Square extends Shape {
-      sideLength: number;
-  }
+    interface Square extends Shape {
+        sideLength: number;
+    }
 
-  var square = <Square>{};
-  square.color = "blue";
-  square.sideLength = 10;
+    var square = <Square>{};
+    square.color = "blue";
+    square.sideLength = 10;
 
 An interface can extend multiple interfaces, creating a combination of all of the interfaces.
 
 接口可以扩展多个接口，创建所有接口的组合。
 
-  interface Shape {
-      color: string;
-  }
+    interface Shape {
+        color: string;
+    }
 
-  interface PenStroke {
-      penWidth: number;
-  }
+    interface PenStroke {
+        penWidth: number;
+    }
 
-  interface Square extends Shape, PenStroke {
-      sideLength: number;
-  }
+    interface Square extends Shape, PenStroke {
+        sideLength: number;
+    }
 
-  var square = <Square>{};
-  square.color = "blue";
-  square.sideLength = 10;
-  square.penWidth = 5.0;
+    var square = <Square>{};
+    square.color = "blue";
+    square.sideLength = 10;
+    square.penWidth = 5.0;
 
 ## Hybrid Types
 ## 混合类型
@@ -431,16 +431,16 @@ One such example is an object that acts as both a function and an object, with a
 
 一种这样的例子是，对象包含附加属性，同时作为函数和对象：
 
-  interface Counter {
-      (start: number): string;
-      interval: number;
-      reset(): void;
-  }
+    interface Counter {
+        (start: number): string;
+        interval: number;
+        reset(): void;
+    }
 
-  var c: Counter;
-  c(10);
-  c.reset();
-  c.interval = 5.0;
+    var c: Counter;
+    c(10);
+    c.reset();
+    c.interval = 5.0;
 
 When interacting with 3rd-party JavaScript, you may need to use patterns like the above to fully-describe the shape of the type.
 
@@ -461,17 +461,17 @@ Traditional JavaScript focuses on functions and prototype-based inheritance as t
 Let's take a look at a simple class-based example:
 我们看下一个简单的基于类的例子：
 
-  class Greeter {
-      greeting: string;
-      constructor(message: string) {
-          this.greeting = message;
-      }
-      greet() {
-          return "Hello, " + this.greeting;
-      }
-  }
+    class Greeter {
+        greeting: string;
+        constructor(message: string) {
+            this.greeting = message;
+        }
+        greet() {
+            return "Hello, " + this.greeting;
+        }
+    }
 
-  var greeter = new Greeter("world");
+    var greeter = new Greeter("world");
 
 The syntax should look very familiar if you've used C# or Java before. We declare a new class 'Greeter'. This class has three members, a property called 'greeting', a constructor, and a method 'greet'. 
 
@@ -495,35 +495,35 @@ TypeScript中，我们使用通过的面向对象模式。当然，基于类编�
 Let's take a look at an example:
 看个例子：
 
-  class Animal {
-      name:string;
-      constructor(theName: string) { this.name = theName; }
-      move(meters: number = 0) {
-          alert(this.name + " moved " + meters + "m.");
-      }
-  }
+    class Animal {
+        name:string;
+        constructor(theName: string) { this.name = theName; }
+        move(meters: number = 0) {
+            alert(this.name + " moved " + meters + "m.");
+        }
+    }
 
-  class Snake extends Animal {
-      constructor(name: string) { super(name); }
-      move(meters = 5) {
-          alert("Slithering...");
-          super.move(meters);
-      }
-  }
+    class Snake extends Animal {
+        constructor(name: string) { super(name); }
+        move(meters = 5) {
+            alert("Slithering...");
+            super.move(meters);
+        }
+    }
 
-  class Horse extends Animal {
-      constructor(name: string) { super(name); }
-      move(meters = 45) {
-          alert("Galloping...");
-          super.move(meters);
-      }
-  }
+    class Horse extends Animal {
+        constructor(name: string) { super(name); }
+        move(meters = 45) {
+            alert("Galloping...");
+            super.move(meters);
+        }
+    }
 
-  var sam = new Snake("Sammy the Python");
-  var tom: Animal = new Horse("Tommy the Palomino");
+    var sam = new Snake("Sammy the Python");
+    var tom: Animal = new Horse("Tommy the Palomino");
 
-  sam.move();
-  tom.move(34);
+    sam.move();
+    tom.move(34);
 
 This example covers quite a bit of the inheritance features in TypeScript that are common to other languages. Here we see using the 'extends' keywords to create a subclass. You can see this where 'Horse' and 'Snake' subclass the base class 'Animal' and gain access to its features.
 
@@ -541,309 +541,367 @@ The example also shows off being able to override methods in the base class with
 
 You may have noticed in the above examples we haven't had to use the word 'public' to make any of the members of the class visible. Languages like C# require that each member be explicitly labelled 'public' to be visible. In TypeScript, each member is public by default. 
 
+你可能注意到上面的例子中我们没必要使用`public`来让类中的成员可见。类似C#的语言要求每个成员都要加上`public`标签才可见。在TypeScript，每个成员都是默认公共的。
+
 You may still mark members a private, so you control what is publicly visible outside of your class. We could have written the 'Animal' class from the previous section like so:
 
-<div><pre>class Animal {
-    private name:string;
-    constructor(theName: string) { this.name = theName; }
-    move(meters: number) {
-        alert(this.name + " moved " + meters + "m.");
+你可能仍然想标记成员为`private`，这样你可以控制类外部公共可见的东西。我们可以重写上节的`Animal`类：
+
+    class Animal {
+        private name:string;
+        constructor(theName: string) { this.name = theName; }
+        move(meters: number) {
+            alert(this.name + " moved " + meters + "m.");
+        }
     }
-}
-</pre></div>
 
 ### Understanding private
+### 理解private
 
 TypeScript is a structural type system. When we compare two different types, regardless of where they came from, if the types of each member are compatible, then we say the types themselves are compatible. 
 
+TypeScript是个结构化类型系统。当我们比较两个不同类型时，不考虑它们的来源，如果每个成员都兼容，那么我们说这些类型是兼容的。
+
 When comparing types that have 'private' members, we treat these differently. For two types to be considered compatible, if one of them has a private member, then the other must have a private member that originated in the same declaration. 
+
+当比较包含`private`成员的类型时，我们会区别对待。对两个兼容的类型，如果其中一个包含`private`成员，那么另一个必须包含来自相同声明的私有成员。
 
 Let's look at an example to better see how this plays out in practice:
 
-<div><pre>class Animal {
-    private name:string;
-    constructor(theName: string) { this.name = theName; }
-}
+我们看个例子来更好地理解实际中的用法：
 
-class Rhino extends Animal {
-    constructor() { super("Rhino"); }
-}
+    class Animal {
+        private name:string;
+        constructor(theName: string) { this.name = theName; }
+    }
 
-class Employee {
-    private name:string;
-    constructor(theName: string) { this.name = theName; }   
-}
+    class Rhino extends Animal {
+        constructor() { super("Rhino"); }
+    }
 
-var animal = new Animal("Goat");
-var rhino = new Rhino();
-var employee = new Employee("Bob");
+    class Employee {
+        private name:string;
+        constructor(theName: string) { this.name = theName; }   
+    }
 
-animal = rhino;
-animal = employee; //error: Animal and Employee are not compatible
-</pre></div>
+    var animal = new Animal("Goat");
+    var rhino = new Rhino();
+    var employee = new Employee("Bob");
+
+    animal = rhino;
+    animal = employee; //error: Animal and Employee are not compatible
 
 In this example, we have an 'Animal' and a 'Rhino', with 'Rhino' being a subclass of 'Animal'. We also have a new class 'Employee' that looks identical to 'Animal' in terms of shape. We create some instances of these classes and then try to assign them to each other to see what will happen. Because 'Animal' and 'Rhino' share the private side of their shape from the same declaration of 'private name: string' in 'Animal', they are compatible. However, this is not the case for 'Employee'. When we try to assign from an 'Employee' to 'Animal' we get an error that these types are not compatible. Even though 'Employee' also has a private member called 'name', it is not the same one as the one created in 'Animal'. 
 
+这个例子中，有一个`Animal`和一个`Rhino`，`Rhino`是`Animal`的子类。还有一个`Employee`，从形式上看与`Animal`相同。我们创建这些类的实例，然后尝试相互赋值来看看会发生什么。由于`Animal`和`Rhino`共享`Animal`中`private name: string`声明的私有部分，它们是兼容的。但是，`Employee`不一样。当我们尝试将`Employee`赋值给一个`Animal`时，我们得到一个类型不兼容的错误。尽管`Employee`同样包含名称为`name`的私有成员，但它与`Animal`中创建的那个不同。
+
 ### Parameter properties
+### 参数属性
 
 The keywords 'public' and 'private' also give you a shorthand for creating and initializing members of your class, by creating parameter properties. The properties let you can create and initialize a member in one step. Here's a further revision of the previous example. Notice how we drop 'theName' altogether and just use the shortened 'private name: string' parameter on the constructor to create and initialize the 'name' member.
 
-<div><pre>class Animal {
-    constructor(private name: string) { }
-    move(meters: number) {
-        alert(this.name + " moved " + meters + "m.");
+`public`和`private`关键词还提供了一种简写，通过创建参数属性来创建和初始化类中的成员。这种属性可以让你一步就可以创建和初始化成员。这里有个上面例子更进一步的版本。注意我们如何去掉`theName`的，只在构造器中使用了简写的`private name: string`参数来创建和初始化`name`成员。
+
+    class Animal {
+        constructor(private name: string) { }
+        move(meters: number) {
+            alert(this.name + " moved " + meters + "m.");
+        }
     }
-}
-</pre></div>
 
 Using 'private' in this way creates and initializes a private member, and similarly for 'public'. 
 
+按照这种方式使用`private`可以创建并初始化私有成员，`public`类似。
+
 ## Accessors
+## 访问器
 
 TypeScript supports getters/setters as a way of intercepting accesses to a member of an object. This gives you a way of having finer-grained control over how a member is accessed on each object.
 
+TypeScript支持getter/setter来拦截对对象成员的访问。这提供了一种细粒度的方式来控制对每个对象
+成员的访问。
+
 Let's convert a simple class to use 'get' and 'set'. First, let's start with an example without getters and setters.
 
-<div><pre>class Employee {
-    fullName: string;
-}
+我们将一个简单的类转换为使用`get`和`set`的形式。首先，我们从一个不包含getter和setter的例子开始。
 
-var employee = new Employee();
-employee.fullName = "Bob Smith";
-if (employee.fullName) {
-    alert(employee.fullName);
-}
-</pre></div>
+    class Employee {
+        fullName: string;
+    }
+
+    var employee = new Employee();
+    employee.fullName = "Bob Smith";
+    if (employee.fullName) {
+        alert(employee.fullName);
+    }
 
 While allowing people to randomly set fullName directly is pretty handy, this might get us in trouble if we people can change names on a whim. 
 
+虽然允许大家随机地直接设置`fullName`是很方便的，但是一旦人们一时冲动改了名字，就可能出现问题。
+
 In this version, we check to make sure the user has a secret passcode available before we allow them to modify the employee. We do this by replacing the direct access to fullName with a 'set' that will check the passcode. We add a corresponding 'get' to allow the previous example to continue to work seamlessly.
 
-<div><pre>var passcode = "secret passcode";
+这个版本中，我们在允许他们修改employee之前检查他们是否有可用密码。我们先将对`fullName`的访问替换为`set`来检查密码。我们添加了对应的`get`来让上例继续无缝的工作。
 
-class Employee {
-    private _fullName: string;
+    var passcode = "secret passcode";
 
-    get fullName(): string {
-        return this._fullName;
+    class Employee {
+        private _fullName: string;
+
+        get fullName(): string {
+            return this._fullName;
+        }
+
+        set fullName(newName: string) {
+            if (passcode && passcode == "secret passcode") {
+                this._fullName = newName;
+            }
+            else {
+                alert("Error: Unauthorized update of employee!");
+            }
+        }
     }
 
-    set fullName(newName: string) {
-        if (passcode &amp;&amp; passcode == "secret passcode") {
-            this._fullName = newName;
-        }
-        else {
-            alert("Error: Unauthorized update of employee!");
-        }
+    var employee = new Employee();
+    employee.fullName = "Bob Smith";
+    if (employee.fullName) {
+        alert(employee.fullName);
     }
-}
-
-var employee = new Employee();
-employee.fullName = "Bob Smith";
-if (employee.fullName) {
-    alert(employee.fullName);
-}
-</pre></div>
 
 To prove to ourselves that our accessor is now checking the passcode, we can modify the passcode and see that when it doesn't match we instead get the alert box warning us we don't have access to update the employee.
 
+为了证明访问器检查了密码，我们修改下密码来看下当它不匹配时，是否会有个提示框警告我们没有权限更新employee。
+
 Note: Accessors require you to set the compiler to output ECMAScript 5.
 
+注意：访问器需要设置编译器输出ECMAScript 5。
+
 ## Static Properties
+## 静态属性
 
 Up to this point, we've only talked about the _instance_ members of the class, those that show up on the object when its instantiated. We can also create _static_ members of a class, those that are visible on the class itself rather than on the instances. In this example, we use 'static' on the origin, as it's a general value for all grids. Each instance accesses this value through prepending the name of the class. Similarly to prepending 'this.' in front of instance accesses, here we prepend 'Grid.' in front of static accesses.
 
-<div><pre>class Grid {
-    static origin = {x: 0, y: 0};
-    calculateDistanceFromOrigin(point: {x: number; y: number;}) {
-        var xDist = (point.x - Grid.origin.x);
-        var yDist = (point.y - Grid.origin.y);
-        return Math.sqrt(xDist * xDist + yDist * yDist) / this.scale;
+现在我们只讨论了类的_实例_成员，它们会在实例化的时候出现在对象中。我们还可以创建类的_静态_成员，它们在类本身中可见而不是在实例中。这个例子中，我们在`origin`前使用`static`，因为它使所有各自的通用值。每个实例通过在前面添加类名来访问这个值。类似实例访问中在前面放`this.`，这里静态访问中我们在前面`Grid.`。
+
+    class Grid {
+        static origin = {x: 0, y: 0};
+        calculateDistanceFromOrigin(point: {x: number; y: number;}) {
+            var xDist = (point.x - Grid.origin.x);
+            var yDist = (point.y - Grid.origin.y);
+            return Math.sqrt(xDist * xDist + yDist * yDist) / this.scale;
+        }
+        constructor (public scale: number) { }
     }
-    constructor (public scale: number) { }
-}
 
-var grid1 = new Grid(1.0);  // 1x scale
-var grid2 = new Grid(5.0);  // 5x scale
+    var grid1 = new Grid(1.0);  // 1x scale
+    var grid2 = new Grid(5.0);  // 5x scale
 
-alert(grid1.calculateDistanceFromOrigin({x: 10, y: 10}));
-alert(grid2.calculateDistanceFromOrigin({x: 10, y: 10}));
-</pre></div>
+    alert(grid1.calculateDistanceFromOrigin({x: 10, y: 10}));
+    alert(grid2.calculateDistanceFromOrigin({x: 10, y: 10}));
 
 ## Advanced Techniques
+## 高级技巧
 
 ### Constructor functions
+### 构造器函数
 
 When you declare a class in TypeScript, you are actually creating multiple declarations at the same time. The first is the type of the _instance_ of the class.
 
-<div><pre>class Greeter {
-    greeting: string;
-    constructor(message: string) {
-        this.greeting = message;
-    }
-    greet() {
-        return "Hello, " + this.greeting;
-    }
-}
+在TypeScript中声明一个类时，你事实上同时创建了声明。首先是类_实例_的类型。
 
-var greeter: Greeter;
-greeter = new Greeter("world");
-alert(greeter.greet());
-</pre></div>
+    class Greeter {
+        greeting: string;
+        constructor(message: string) {
+            this.greeting = message;
+        }
+        greet() {
+            return "Hello, " + this.greeting;
+        }
+    }
+
+    var greeter: Greeter;
+    greeter = new Greeter("world");
+    alert(greeter.greet());
 
 Here, when we say 'var greeter: Greeter', we're using Greeter as the type of instances of the class Greeter. This is almost second nature to programmers from other object-oriented languages. 
 
+这里，当写下`var greeter: Greeter`时，我们将`Greeter`作为类`Greeter`的实例的类型。这几乎是其他面向对象语言程序员的第二本能。
+
 We're also creating another value that we call the _constructor function_. This is the function that is called when we 'new' up instances of the class. To see what this looks like in practice, let's take a look at the JavaScript created by the above example:
 
-<div><pre>var Greeter = (function () {
-    function Greeter(message) {
-        this.greeting = message;
-    }
-    Greeter.prototype.greet = function () {
-        return "Hello, " + this.greeting;
-    };
-    return Greeter;
-})();
+我们也可以调用_构造器函数_来创建另一个值。它就是我们`new`类实例时所调用的函数。为了看看实际上它长什么样，我们看看上例生成的JavaScript：
 
-var greeter;
-greeter = new Greeter("world");
-alert(greeter.greet());
-</pre></div>
+    var Greeter = (function () {
+        function Greeter(message) {
+            this.greeting = message;
+        }
+        Greeter.prototype.greet = function () {
+            return "Hello, " + this.greeting;
+        };
+        return Greeter;
+    })();
+
+    var greeter;
+    greeter = new Greeter("world");
+    alert(greeter.greet());
 
 Here, 'var Greeter' is going to be assigned the constructor function. When we call 'new' and run this function, we get an instance of the class. The constructor function also contains all of the static members of the class. Another way to think of each class is that there is an _instance_ side and a _static_ side.
 
+这里`var Greeter`将被赋值为构造器函数。当调用`new`并运行该函数时，我们得到了类的一个实例。这个构造函数同时包含了类中的所有静态成员。思考每个类的另一种方式就是认为它们都有_实例_部分和_静态_部分。
+
 Let's modify the example a bit to show this difference:
 
-<div><pre>class Greeter {
-    static standardGreeting = "Hello, there";
-    greeting: string;
-    greet() {
-        if (this.greeting) {
-            return "Hello, " + this.greeting;
-        }
-        else {
-            return Greeter.standardGreeting;
+我们稍微修改下例子来看看区别：
+
+    class Greeter {
+        static standardGreeting = "Hello, there";
+        greeting: string;
+        greet() {
+            if (this.greeting) {
+                return "Hello, " + this.greeting;
+            }
+            else {
+                return Greeter.standardGreeting;
+            }
         }
     }
-}
 
-var greeter1: Greeter;
-greeter1 = new Greeter();
-alert(greeter1.greet());
+    var greeter1: Greeter;
+    greeter1 = new Greeter();
+    alert(greeter1.greet());
 
-var greeterMaker: typeof Greeter = Greeter;
-greeterMaker.standardGreeting = "Hey there!";
-var greeter2:Greeter = new greeterMaker();
-alert(greeter2.greet());
-</pre></div>
+    var greeterMaker: typeof Greeter = Greeter;
+    greeterMaker.standardGreeting = "Hey there!";
+    var greeter2:Greeter = new greeterMaker();
+    alert(greeter2.greet());
 
 In this example, 'greeter1' works similarly to before. We instantiate the 'Greeter' class, and use this object. This we have seen before.
 
+这个例子中，`greeter1`跟之前的功能类似。我们实例化`Greeter`类，然后使用该对象。这些我们之前都看到过。
+
 Next, we then use the class directly. Here we create a new variable called 'greeterMaker'. This variable will hold the class itself, or said another way its constructor function. Here we use 'typeof Greeter', that is "give me the type of the Greeter class itself" rather than the instance type. Or, more precisely, "give me the type of the symbol called Greeter", which is the type of the constructor function. This type will contain all of the static members of Greeter along with the constructor that creates instances of the Greeter class. We show this by using 'new' on 'greeterMaker', creating new instances of 'Greeter' and invoking them as before.
 
+接着，我们直接使用类。这里我们创建了一个新的`greeterMaker`变量。这个变量将会保存类本身，或者换种说法，构造器函数。这里我们使用`typeof Greeter`，意思是“告诉我Greeter类的类型”而不是实例的类型。或者，更准确地将，“告诉我Greeter符号的类型”，它使构造函数的类型。这个类型将包含Greeter的所有静态成员，还有生成Greeter类实例的构造器。我们对`greeterMaker`使用`new`，生成了`Greeter`的新实例并像之前一样调用它们。
+
 ### Using a class as an interface
+### 作为接口使用类
 
 As we said in the previous section, a class declaration creates two things: a type representing instances of the class and a constructor function. Because classes create types, you can use them in the same places you would be able to use interfaces.
 
-<div><pre>class Point {
-    x: number;
-    y: number;
-}
+上节中我们说过，类声明生成了两种东西：表示类实例的类型和构造函数。由于类创建了类型，你可以在使用接口的地方使用它们。
 
-interface Point3d extends Point {
-    z: number;
-}
+    class Point {
+        x: number;
+        y: number;
+    }
 
-var point3d: Point3d = {x: 1, y: 2, z: 3};
-</pre></div>
+    interface Point3d extends Point {
+        z: number;
+    }
+
+    var point3d: Point3d = {x: 1, y: 2, z: 3};
 
 * * *
 
 # Modules
+# 模块
 
 This post outlines the various ways to organize your code using modules in TypeScript. We'll be covering internal and external modules and we'll discuss when each is appropriate and how to use them. We'll also go over some advanced topics of how to use external modules, and address some common pitfalls when using modules in TypeScript.
 
+这篇文章会概述在TypeScript中使用模块来组织代码的多种方式。我们将会讲到内部和外部模块，并且会讨论何时使用会更合适以及如果使用。我们同时还会讲到如果使用外部模块的高级话题，并解释在TypeScript中使用模块常见的陷阱。
+
 #### First steps
+#### 第一步
 
 Let's start with the program we'll be using as our example throughout this page. We've written a small set of simplistic string validators, like you might use when checking a user's input on a form in a webpage or checking the format of an externally-provided data file.
 
+我们从一个程序开始，这个程序将在整个页面中作为例子使用。我们编写了一组简化的字符串验证器，你可能在网页上验证用户输入或者检查外部提供的数据文件格式时使用。
+
 ###### Validators in a single file
-<div><pre>interface StringValidator {
-    isAcceptable(s: string): boolean;
-}
+###### 验证器存在一个文件
 
-var lettersRegexp = /^[A-Za-z]+$/;
-var numberRegexp = /^[0-9]+$/;
-
-class LettersOnlyValidator implements StringValidator {
-    isAcceptable(s: string) {
-        return lettersRegexp.test(s);
-    }
-}
-
-class ZipCodeValidator implements StringValidator {
-    isAcceptable(s: string) {
-        return s.length === 5 &amp;&amp; numberRegexp.test(s);
-    }
-}
-
-// Some samples to try
-var strings = ['Hello', '98052', '101'];
-// Validators to use
-var validators: { [s: string]: StringValidator; } = {};
-validators['ZIP code'] = new ZipCodeValidator();
-validators['Letters only'] = new LettersOnlyValidator();
-// Show whether each string passed each validator
-strings.forEach(s => {
-    for (var name in validators) {
-        console.log('"' + s + '" ' + (validators[name].isAcceptable(s) ? ' matches ' : ' does not match ') + name);
-    }
-});
-</pre></div>
-
-#### Adding Modularity
-
-As we add more validators, we're going to want to have some kind of organization scheme so that we can keep track of our types and not worry about name collisions with other objects. Instead of putting lots of different names into the global namespace, let's wrap up our objects into a module.
-
-In this example, we've moved all the Validator-related types into a module called _Validation_. Because we want the interfaces and classes here to be visible outside the module, we preface them with _export_. Conversely, the variables _lettersRegexp_ and_numberRegexp_ are implementation details, so they are left unexported and will not be visible to code outside the module. In the test code at the bottom of the file, we now need to qualify the names of the types when used outside the module, e.g._Validation.LettersOnlyValidator_.
-
-###### Modularized Validators
-<div><pre>module Validation {
-    export interface StringValidator {
+    interface StringValidator {
         isAcceptable(s: string): boolean;
     }
 
     var lettersRegexp = /^[A-Za-z]+$/;
     var numberRegexp = /^[0-9]+$/;
 
-    export class LettersOnlyValidator implements StringValidator {
+    class LettersOnlyValidator implements StringValidator {
         isAcceptable(s: string) {
             return lettersRegexp.test(s);
         }
     }
 
-    export class ZipCodeValidator implements StringValidator {
+    class ZipCodeValidator implements StringValidator {
         isAcceptable(s: string) {
-            return s.length === 5 &amp;&amp; numberRegexp.test(s);
+            return s.length === 5 && numberRegexp.test(s);
         }
     }
-}
 
-// Some samples to try
-var strings = ['Hello', '98052', '101'];
-// Validators to use
-var validators: { [s: string]: Validation.StringValidator; } = {};
-validators['ZIP code'] = new Validation.ZipCodeValidator();
-validators['Letters only'] = new Validation.LettersOnlyValidator();
-// Show whether each string passed each validator
-strings.forEach(s => {
-    for (var name in validators) {
-        console.log('"' + s + '" ' + (validators[name].isAcceptable(s) ? ' matches ' : ' does not match ') + name);
+    // Some samples to try
+    var strings = ['Hello', '98052', '101'];
+    // Validators to use
+    var validators: { [s: string]: StringValidator; } = {};
+    validators['ZIP code'] = new ZipCodeValidator();
+    validators['Letters only'] = new LettersOnlyValidator();
+    // Show whether each string passed each validator
+    strings.forEach(s => {
+        for (var name in validators) {
+            console.log('"' + s + '" ' + (validators[name].isAcceptable(s) ? ' matches ' : ' does not match ') + name);
+        }
+    });
+
+#### Adding Modularity
+#### 添加模块化
+
+As we add more validators, we're going to want to have some kind of organization scheme so that we can keep track of our types and not worry about name collisions with other objects. Instead of putting lots of different names into the global namespace, let's wrap up our objects into a module.
+
+当我们添加更多验证器时，我们想拥有多种组织模式来跟踪类型而不用担心与其他对象的命名冲突。我们将对象包装到模块中，而不是把很多不同的名字放到全局命名空间中去。
+
+In this example, we've moved all the Validator-related types into a module called _Validation_. Because we want the interfaces and classes here to be visible outside the module, we preface them with _export_. Conversely, the variables _lettersRegexp_ and_numberRegexp_ are implementation details, so they are left unexported and will not be visible to code outside the module. In the test code at the bottom of the file, we now need to qualify the names of the types when used outside the module, e.g._Validation.LettersOnlyValidator_.
+
+这个例子中，我们将全部与验证器有关的类型都移动到_Validation_模块中。由于我们想要这里的借口和类在模块外也可见，我们使用_export_来开始。相反，_lettersRegexp_和_numberRegexp_变量都是实现细节，所以它们将不会导出，在模块外的代码中不可见。这个文件底部的测试代码中，我们需要在模块外使用它们时验证类型的名字，比如_Validation.LettersOnlyValidator_。
+
+###### Modularized Validators
+###### 模块化的验证器
+
+    module Validation {
+        export interface StringValidator {
+            isAcceptable(s: string): boolean;
+        }
+
+        var lettersRegexp = /^[A-Za-z]+$/;
+        var numberRegexp = /^[0-9]+$/;
+
+        export class LettersOnlyValidator implements StringValidator {
+            isAcceptable(s: string) {
+                return lettersRegexp.test(s);
+            }
+        }
+
+        export class ZipCodeValidator implements StringValidator {
+            isAcceptable(s: string) {
+                return s.length === 5 && numberRegexp.test(s);
+            }
+        }
     }
-});
-</pre></div>
+
+    // Some samples to try
+    var strings = ['Hello', '98052', '101'];
+    // Validators to use
+    var validators: { [s: string]: Validation.StringValidator; } = {};
+    validators['ZIP code'] = new Validation.ZipCodeValidator();
+    validators['Letters only'] = new Validation.LettersOnlyValidator();
+    // Show whether each string passed each validator
+    strings.forEach(s => {
+        for (var name in validators) {
+            console.log('"' + s + '" ' + (validators[name].isAcceptable(s) ? ' matches ' : ' does not match ') + name);
+        }
+    });
 
 ## Splitting Across Files
+## 分离到多个文件
 
 As our application grows, we'll want to split the code across multiple files to make it easier to maintain.
 
@@ -877,7 +935,7 @@ module Validation {
     var numberRegexp = /^[0-9]+$/;
     export class ZipCodeValidator implements StringValidator {
         isAcceptable(s: string) {
-            return s.length === 5 &amp;&amp; numberRegexp.test(s);
+            return s.length === 5 && numberRegexp.test(s);
         }
     }
 }
@@ -912,14 +970,14 @@ The compiler will automatically order the output file based on the reference tag
 <pre>tsc --out sample.js Validation.ts LettersOnlyValidator.ts ZipCodeValidator.ts Test.ts
 </pre>
 
-Alternatively, we can use per-file compilation (the default) to emit one JavaScript file for each input file. If multiple JS files get produced, we'll need to use _<script>_ tags on our webpage to load each emitted file in the appropriate order, for example:
+Alternatively, we can use per-file compilation (the default) to emit one JavaScript file for each input file. If multiple JS files get produced, we'll need to use _&lt;script&gt;_ tags on our webpage to load each emitted file in the appropriate order, for example:
 
 ###### MyTestPage.html (excerpt)
-<div><pre>    <script src="Validation.js" type="text/javascript" />
+
+    <script src="Validation.js" type="text/javascript" />
     <script src="LettersOnlyValidator.js" type="text/javascript" />
     <script src="ZipCodeValidator.js" type="text/javascript" />
     <script src="Test.js" type="text/javascript" />
-</pre></div>
 
 ## Going External
 
@@ -963,7 +1021,7 @@ export class LettersOnlyValidator implements validation.StringValidator {
 var numberRegexp = /^[0-9]+$/;
 export class ZipCodeValidator implements validation.StringValidator {
     isAcceptable(s: string) {
-        return s.length === 5 &amp;&amp; numberRegexp.test(s);
+        return s.length === 5 && numberRegexp.test(s);
     }
 }
 </pre></div>
@@ -1039,7 +1097,7 @@ export = LettersOnlyValidator;
 var numberRegexp = /^[0-9]+$/;
 class ZipCodeValidator implements validation.StringValidator {
     isAcceptable(s: string) {
-        return s.length === 5 &amp;&amp; numberRegexp.test(s);
+        return s.length === 5 && numberRegexp.test(s);
     }
 }
 export = ZipCodeValidator;
@@ -1692,7 +1750,7 @@ alert(stringNumeric.add(stringNumeric.zeroValue, "test"));
 
 Just as with interface, putting the type parameter on the class itself lets us make sure all of the properties of the class are working with the same type.
 
-As we covered in [Classes](https://typescript.codeplex.com/wikipage?title=Classes%20in%20TypeScript&amp;referringTitle=Generics%20in%20TypeScript "Classes%20in%20TypeScript&amp;referringTitle=Generics%20in%20TypeScript"), a class has two side to its type: the static side and the instance side. Generic classes are only generic over their instance side rather than their static side, so when working with classes, static members can not use the class's type parameter.
+As we covered in [Classes](https://typescript.codeplex.com/wikipage?title=Classes%20in%20TypeScript&referringTitle=Generics%20in%20TypeScript "Classes%20in%20TypeScript&referringTitle=Generics%20in%20TypeScript"), a class has two side to its type: the static side and the instance side. Generic classes are only generic over their instance side rather than their static side, so when working with classes, static members can not use the class's type parameter.
 
 ## Generic Constraints
 
@@ -2101,7 +2159,7 @@ module Color {
 
 ## Disallowed Merges
 
-Not all merges are allowed in TypeScript. Currently, classes can not merge with other classes, variables and classes can not merge, nor can interfaces and classes. For information on mimicking classes merging, see the [Mixins in TypeScript](https://typescript.codeplex.com/wikipage?title=Mixins%20in%20TypeScript&amp;referringTitle=Declaration%20Merging "Mixins%20in%20TypeScript&amp;referringTitle=Declaration%20Merging") section.
+Not all merges are allowed in TypeScript. Currently, classes can not merge with other classes, variables and classes can not merge, nor can interfaces and classes. For information on mimicking classes merging, see the [Mixins in TypeScript](https://typescript.codeplex.com/wikipage?title=Mixins%20in%20TypeScript&referringTitle=Declaration%20Merging "Mixins%20in%20TypeScript&referringTitle=Declaration%20Merging") section.
 
 * * *
 
