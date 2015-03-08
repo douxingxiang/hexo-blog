@@ -1,6 +1,7 @@
-title: TypeScript手册基本类型
-date: 2015-03-08
-tags: typescript
+title: TypeScript基本类型
+date: 2015-03-08 09:00:00
+tags: TypeScript
+categories: TypeScript手册
 ---
 
 > 声明：原文来自[TypeScript官网](http://www.typescriptlang.org/Handbook)，本文仅作为中文入门之用。
@@ -14,6 +15,8 @@ tags: typescript
 最基本的数据类型是简单的`true`/`false`值，在JavaScript和TypeScript（还有其他语言）中称作`boolean`值。
 
     var isDone: boolean = false;
+
+<!-- more --> 
 
 ## 数字类型/number
 

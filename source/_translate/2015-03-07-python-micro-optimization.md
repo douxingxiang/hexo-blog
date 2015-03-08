@@ -1,12 +1,17 @@
 I'm going to show you how a micro optimization can speed up your python code by a whopping 5%. 5%! It can also annoy anyone that has to maintain your code.
 
+我将示范微优化（micro optimization）如何可以提升python代码5%的执行速度。5%！同时也会恼怒任何维护你所写代码的人。
+
 But really, this is about explaining code might you see occasionally see in the standard library or in other people's code. Let's take an example from the standard library, specifically the <tt>collections.OrderedDict</tt> class:
-<div><pre>def __setitem__(self, key, value, dict_setitem=dict.__setitem__):
-    if key not in self:
-        root = self.__root
-        last = root[0]
-        last[1] = root[0] = self.__map[key] = [last, root, key]
-    return dict_setitem(self, key, value)</pre></div>
+
+但实际上，这篇文章是对你偶尔在标准库或者其他人的代码中碰到的代码的解释。我们先看一个标准库的例子，特别是`collections.OrderedDict`类：
+
+    def __setitem__(self, key, value, dict_setitem=dict.__setitem__):
+        if key not in self:
+            root = self.__root
+            last = root[0]
+            last[1] = root[0] = self.__map[key] = [last, root, key]
+        return dict_setitem(self, key, value)
 
 Notice the last arg: <tt>dict_setitem=dict.__setitem__</tt>. It makes sense if you think about it. To associate a key with a value, you'll need to provide a <tt>__setitem__</tt> method which takes three arguments: the key you're setting, the value associated with the key, and the <tt>__setitem__</tt> class method to the built in dict class. Wait. Ok maybe the last argument makes no sense.
 <div id="scope-lookups">
@@ -19,7 +24,7 @@ To understand what's going on here, we need to take a look at scopes. Let's star
 def myfunc():
     # &lt;LOCAL: bunch of code here&gt;
     with open('foo.txt', 'w') as f:
-        pass</pre></div>
+        pass
 
 The short answer is that without knowing the contents of the GLOBAL and the LOCAL section, you can't know for certain the value of <tt>open</tt>. Conceptually, python checks three namespaces for a name (ignoring nested scopes to keep things simple):
 
@@ -41,7 +46,7 @@ def bar():
     return a
 
 def baz(a=1):
-    return a</pre></div>
+    return a
 
 Let's look at the bytecode of each function:
 <pre>&gt;&gt;&gt; import dis
@@ -77,7 +82,7 @@ One other thing that can be confusing is that <tt>LOAD_GLOBAL</tt> is used for
             goto error;
         }
     }
-    PUSH(v);</pre></div>
+    PUSH(v);
 
 Even if you've never seen any of the C code for CPython, the above code is pretty straightforward. First, check if the key name we're looking for is in <tt>f-&gt;f_globals</tt> (the globals dict), then check if the name is in <tt>f-&gt;f_builtins</tt> (the builtins dict), and finally, raise a <tt>NameError</tt> if both checks failed.
 </div><div id="binding-constants-to-the-local-scope">
@@ -89,7 +94,7 @@ Now when we look at the initial code sample, we can see that the last argument i
   return not (isinstance(value, dict) or isinstance(value, list))
 
 def not_list_or_dict(value, _isinstance=isinstance, _dict=dict, _list=list):
-  return not (_isinstance(value, _dict) or _isinstance(value, _list))</pre></div>
+  return not (_isinstance(value, _dict) or _isinstance(value, _list))
 
 We're doing the same thing here, binding what would normally be objects that are in the builtin namespace into the local namespace instead. So instead of requiring the use of <tt>LOAD_GLOBAL</tt> (a global lookup), python instead will use <tt>LOCAL_FAST</tt>. So how much faster is this? Let's do some crude testing:
 <pre>$ python -m timeit -s 'def not_list_or_dict(value): return not (isinstance(value, dict) or isinstance(value, list))' 'not_list_or_dict(50)'
@@ -117,7 +122,7 @@ The C code snippet above showed the code for <tt>LOAD_GLOBAL</tt>, but here's t
     }
     Py_INCREF(value);
     PUSH(value);
-    FAST_DISPATCH();</pre></div>
+    FAST_DISPATCH();
 
 We're retrieving the local value by indexing into an _array_. It's not shown here, but<tt>oparg</tt> is just an index into that array.
 
