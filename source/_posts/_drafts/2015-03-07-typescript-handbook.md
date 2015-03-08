@@ -905,70 +905,71 @@ In this example, we've moved all the Validator-related types into a module calle
 
 As our application grows, we'll want to split the code across multiple files to make it easier to maintain.
 
+随着应用的增长，我们希望把代码分离到多个文件，这样易于维护。
+
 Here, we've split our Validation module across many files. Even though the files are separate, they can each contribute to the same module and can be consumed as if they were all defined in one place. Because there are dependencies between files, we've added reference tags to tell the compiler about the relationships between the files. Our test code is otherwise unchanged.
 
+这里，我们把Validation模块分为多个文件。尽管文件是分开的，但是它们属于同一个模块，可以像在一个地方定义那样使用。由于文件之间有依赖，我们添加一些引用标签来告诉编译器文件之间的关系。测试代码其他地方都不变。
+
 #### Multi-file internal modules
+#### 多文件内部模块
 
 ###### Validation.ts
-<div><pre>module Validation {
-    export interface StringValidator {
-        isAcceptable(s: string): boolean;
+    module Validation {
+        export interface StringValidator {
+            isAcceptable(s: string): boolean;
+        }
     }
-}
-</pre></div>
 
 ###### LettersOnlyValidator.ts
-<div><pre>/// <reference path="Validation.ts" />
-module Validation {
-    var lettersRegexp = /^[A-Za-z]+$/;
-    export class LettersOnlyValidator implements StringValidator {
-        isAcceptable(s: string) {
-            return lettersRegexp.test(s);
+    /// <reference path="Validation.ts" />
+    module Validation {
+        var lettersRegexp = /^[A-Za-z]+$/;
+        export class LettersOnlyValidator implements StringValidator {
+            isAcceptable(s: string) {
+                return lettersRegexp.test(s);
+            }
         }
     }
-}
-</pre></div>
 
 ###### ZipCodeValidator.ts
-<div><pre>/// <reference path="Validation.ts" />
-module Validation {
-    var numberRegexp = /^[0-9]+$/;
-    export class ZipCodeValidator implements StringValidator {
-        isAcceptable(s: string) {
-            return s.length === 5 && numberRegexp.test(s);
+    /// <reference path="Validation.ts" />
+    module Validation {
+        var numberRegexp = /^[0-9]+$/;
+        export class ZipCodeValidator implements StringValidator {
+            isAcceptable(s: string) {
+                return s.length === 5 && numberRegexp.test(s);
+            }
         }
     }
-}
-</pre></div>
 
 ###### Test.ts
-<div><pre>/// <reference path="Validation.ts" />
-/// <reference path="LettersOnlyValidator.ts" />
-/// <reference path="ZipCodeValidator.ts" />
+    /// <reference path="Validation.ts" />
+    /// <reference path="LettersOnlyValidator.ts" />
+    /// <reference path="ZipCodeValidator.ts" />
 
-// Some samples to try
-var strings = ['Hello', '98052', '101'];
-// Validators to use
-var validators: { [s: string]: Validation.StringValidator; } = {};
-validators['ZIP code'] = new Validation.ZipCodeValidator();
-validators['Letters only'] = new Validation.LettersOnlyValidator();
-// Show whether each string passed each validator
-strings.forEach(s => {
-    for (var name in validators) {
-        console.log('"' + s + '" ' + (validators[name].isAcceptable(s) ? ' matches ' : ' does not match ') + name);
-    }
-});
-</pre></div>
+    // Some samples to try
+    var strings = ['Hello', '98052', '101'];
+    // Validators to use
+    var validators: { [s: string]: Validation.StringValidator; } = {};
+    validators['ZIP code'] = new Validation.ZipCodeValidator();
+    validators['Letters only'] = new Validation.LettersOnlyValidator();
+    // Show whether each string passed each validator
+    strings.forEach(s => {
+        for (var name in validators) {
+            console.log('"' + s + '" ' + (validators[name].isAcceptable(s) ? ' matches ' : ' does not match ') + name);
+        }
+    });
 
 Once there are multiple files involved, we'll need to make sure all of the compiled code gets loaded. There are two ways of doing this.
 
 First, we can use concatenated output using the _--out_ flag to compile all of the input files into a single JavaScript output file:
-<pre>tsc --out sample.js Test.ts
-</pre>
+
+    tsc --out sample.js Test.ts
 
 The compiler will automatically order the output file based on the reference tags present in the files. You can also specify each file individually:
-<pre>tsc --out sample.js Validation.ts LettersOnlyValidator.ts ZipCodeValidator.ts Test.ts
-</pre>
+
+    tsc --out sample.js Validation.ts LettersOnlyValidator.ts ZipCodeValidator.ts Test.ts
 
 Alternatively, we can use per-file compilation (the default) to emit one JavaScript file for each input file. If multiple JS files get produced, we'll need to use _&lt;script&gt;_ tags on our webpage to load each emitted file in the appropriate order, for example:
 
@@ -989,61 +990,60 @@ Below, we have converted the previous example to use external modules. Notice th
 
 The reference tags have been replaced with _import_ statements that specify the dependencies between modules. The _import_statement has two parts: the name that the module will be known by in this file, and the require keyword that specifies the path to the required module:
 
-<div><pre>import someMod = require('someModule');
-</pre></div>
+    import someMod = require('someModule');
 
 We specify which objects are visible outside the module by using the _export_ keyword on a top-level declaration, similarly to how _export_ defined the public surface area of an internal module.
 
 To compile, we must specify a module target on the command line. For node.js, use _--target commonjs_; for require.js, use _--target amd_. For example:
-<pre>tsc --module commonjs Test.ts
-</pre>
+
+    tsc --module commonjs Test.ts
 
 When compiled, each external module will become a separate .js file. Similar to reference tags, the compiler will follow_import_ statements to compile dependent files.
 
 ###### Validation.ts
-<div><pre>export interface StringValidator {
-    isAcceptable(s: string): boolean;
-}
-</pre></div>
+
+    export interface StringValidator {
+        isAcceptable(s: string): boolean;
+    }
 
 ###### LettersOnlyValidator.ts
-<div><pre>import validation = require('./Validation');
-var lettersRegexp = /^[A-Za-z]+$/;
-export class LettersOnlyValidator implements validation.StringValidator {
-    isAcceptable(s: string) {
-        return lettersRegexp.test(s);
+
+    import validation = require('./Validation');
+    var lettersRegexp = /^[A-Za-z]+$/;
+    export class LettersOnlyValidator implements validation.StringValidator {
+        isAcceptable(s: string) {
+            return lettersRegexp.test(s);
+        }
     }
-}
-</pre></div>
 
 ###### ZipCodeValidator.ts
-<div><pre>import validation = require('./Validation');
-var numberRegexp = /^[0-9]+$/;
-export class ZipCodeValidator implements validation.StringValidator {
-    isAcceptable(s: string) {
-        return s.length === 5 && numberRegexp.test(s);
+    
+    import validation = require('./Validation');
+    var numberRegexp = /^[0-9]+$/;
+    export class ZipCodeValidator implements validation.StringValidator {
+        isAcceptable(s: string) {
+            return s.length === 5 && numberRegexp.test(s);
+        }
     }
-}
-</pre></div>
 
 ###### Test.ts
-<div><pre>import validation = require('./Validation');
-import zip = require('./ZipCodeValidator');
-import letters = require('./LettersOnlyValidator');
+    
+    import validation = require('./Validation');
+    import zip = require('./ZipCodeValidator');
+    import letters = require('./LettersOnlyValidator');
 
-// Some samples to try
-var strings = ['Hello', '98052', '101'];
-// Validators to use
-var validators: { [s: string]: validation.StringValidator; } = {};
-validators['ZIP code'] = new zip.ZipCodeValidator();
-validators['Letters only'] = new letters.LettersOnlyValidator();
-// Show whether each string passed each validator
-strings.forEach(s => {
-    for (var name in validators) {
-        console.log('"' + s + '" ' + (validators[name].isAcceptable(s) ? ' matches ' : ' does not match ') + name);
-    }
-});
-</pre></div>
+    // Some samples to try
+    var strings = ['Hello', '98052', '101'];
+    // Validators to use
+    var validators: { [s: string]: validation.StringValidator; } = {};
+    validators['ZIP code'] = new zip.ZipCodeValidator();
+    validators['Letters only'] = new letters.LettersOnlyValidator();
+    // Show whether each string passed each validator
+    strings.forEach(s => {
+        for (var name in validators) {
+            console.log('"' + s + '" ' + (validators[name].isAcceptable(s) ? ' matches ' : ' does not match ') + name);
+        }
+    });
 
 #### Code Generation for External Modules
 
@@ -1052,20 +1052,20 @@ Depending on the module target specified during compilation, the compiler will g
 This simple example shows how the names used during importing and exporting get translated into the module loading code.
 
 ###### SimpleModule.ts
-<div><pre>import m = require('mod');
-export var t = m.something + 1;
-</pre></div>
+
+    import m = require('mod');
+    export var t = m.something + 1;
 
 ###### AMD / RequireJS SimpleModule.js:
-<div><pre>define(["require", "exports", 'mod'], function(require, exports, m) {
-    exports.t = m.something + 1;
-});
-</pre></div>
+
+    define(["require", "exports", 'mod'], function(require, exports, m) {
+        exports.t = m.something + 1;
+    });
 
 ###### CommonJS / Node SimpleModule.js:
-<div><pre>var m = require('mod');
-exports.t = m.something + 1;
-</pre></div>
+
+    var m = require('mod');
+    exports.t = m.something + 1;
 
 ## Export =
 
@@ -1076,67 +1076,67 @@ The export = syntax specifies a single object that is exported from the module. 
 Below, we've simplified the Validator implementations to only export a single object from each module using the export = syntax. This simplifies the consumption code – instead of referring to 'zip.ZipCodeValidator', we can simply refer to 'zipValidator'.
 
 ###### Validation.ts
-<div><pre>export interface StringValidator {
-    isAcceptable(s: string): boolean;
-}
-</pre></div>
+
+    export interface StringValidator {
+        isAcceptable(s: string): boolean;
+    }
 
 ###### LettersOnlyValidator.ts
-<div><pre>import validation = require('./Validation');
-var lettersRegexp = /^[A-Za-z]+$/;
-class LettersOnlyValidator implements validation.StringValidator {
-    isAcceptable(s: string) {
-        return lettersRegexp.test(s);
+
+    import validation = require('./Validation');
+    var lettersRegexp = /^[A-Za-z]+$/;
+    class LettersOnlyValidator implements validation.StringValidator {
+        isAcceptable(s: string) {
+            return lettersRegexp.test(s);
+        }
     }
-}
-export = LettersOnlyValidator;
-</pre></div>
+    export = LettersOnlyValidator;
 
 ###### ZipCodeValidator.ts
-<div><pre>import validation = require('./Validation');
-var numberRegexp = /^[0-9]+$/;
-class ZipCodeValidator implements validation.StringValidator {
-    isAcceptable(s: string) {
-        return s.length === 5 && numberRegexp.test(s);
+    
+    import validation = require('./Validation');
+    var numberRegexp = /^[0-9]+$/;
+    class ZipCodeValidator implements validation.StringValidator {
+        isAcceptable(s: string) {
+            return s.length === 5 && numberRegexp.test(s);
+        }
     }
-}
-export = ZipCodeValidator;
-</pre></div>
+    export = ZipCodeValidator;
 
 ###### Test.ts
-<div><pre>import validation = require('./Validation');
-import zipValidator = require('./ZipCodeValidator');
-import lettersValidator = require('./LettersOnlyValidator');
+    
+    import validation = require('./Validation');
+    import zipValidator = require('./ZipCodeValidator');
+    import lettersValidator = require('./LettersOnlyValidator');
 
-// Some samples to try
-var strings = ['Hello', '98052', '101'];
-// Validators to use
-var validators: { [s: string]: validation.StringValidator; } = {};
-validators['ZIP code'] = new zipValidator();
-validators['Letters only'] = new lettersValidator();
-// Show whether each string passed each validator
-strings.forEach(s => {
-    for (var name in validators) {
-        console.log('"' + s + '" ' + (validators[name].isAcceptable(s) ? ' matches ' : ' does not match ') + name);
-    }
-});
-</pre></div>
+    // Some samples to try
+    var strings = ['Hello', '98052', '101'];
+    // Validators to use
+    var validators: { [s: string]: validation.StringValidator; } = {};
+    validators['ZIP code'] = new zipValidator();
+    validators['Letters only'] = new lettersValidator();
+    // Show whether each string passed each validator
+    strings.forEach(s => {
+        for (var name in validators) {
+            console.log('"' + s + '" ' + (validators[name].isAcceptable(s) ? ' matches ' : ' does not match ') + name);
+        }
+    });
 
 ## Alias
 
 Another way that you can simplify working with either kind of module is to use _import q = x.y.z_ to create shorter names for commonly-used objects. Not to be confused with the _import x = require('name')_ syntax used to load external modules, this syntax simply creates an alias for the specified symbol. You can use these sorts of imports (commonly referred to as aliases) for any kind of identifier, including objects created from external module imports.
 
 ###### Basic Aliasing
-<div><pre>module Shapes {
-    export module Polygons {
-        export class Triangle { }
-        export class Square { }
+    
+    module Shapes {
+        export module Polygons {
+            export class Triangle { }
+            export class Square { }
+        }
     }
-}
 
-import polygons = Shapes.Polygons;
-var sq = new polygons.Square(); // Same as 'new Shapes.Polygons.Square()'
-</pre></div>
+    import polygons = Shapes.Polygons;
+    var sq = new polygons.Square(); // Same as 'new Shapes.Polygons.Square()'
 
 Notice that we don't use the _require_ keyword; instead we assign directly from the qualified name of the symbol we're importing. This is similar to using _var_, but also works on the type and namespace meanings of the imported symbol. Importantly, for values, _import_ is a distinct reference from the original symbol, so changes to an aliased _var_ will not be reflected in the original variable.
 
@@ -1151,23 +1151,23 @@ The core idea of the pattern is that the _import id = require('...')_ statemen
 To maintain type safety, we can use the _typeof_ keyword. The _typeof_ keyword, when used in a type position, produces the type of a value, in this case the type of the external module.
 
 ###### Dynamic Module Loading in node.js
-<div><pre>declare var require;
-import Zip = require('./ZipCodeValidator');
-if (needZipValidation) {
-    var x: typeof Zip = require('./ZipCodeValidator');
-    if (x.isAcceptable('.....')) { /* ... */ }
-}
-</pre></div>
+    
+    declare var require;
+    import Zip = require('./ZipCodeValidator');
+    if (needZipValidation) {
+        var x: typeof Zip = require('./ZipCodeValidator');
+        if (x.isAcceptable('.....')) { /* ... */ }
+    }
 
 ###### Sample: Dynamic Module Loading in require.js
-<div><pre>declare var require;
-import Zip = require('./ZipCodeValidator');
-if (needZipValidation) {
-    require(['./ZipCodeValidator'], (x: typeof Zip) => {
-        if (x.isAcceptable('...')) { /* ... */ }
-    });
-}
-</pre></div>
+
+    declare var require;
+    import Zip = require('./ZipCodeValidator');
+    if (needZipValidation) {
+        require(['./ZipCodeValidator'], (x: typeof Zip) => {
+            if (x.isAcceptable('...')) { /* ... */ }
+        });
+    }
 
 ## Working with Other JavaScript Libraries
 
@@ -1178,55 +1178,54 @@ To describe the shape of libraries not written in TypeScript, we need to declare
 The popular library D3 defines its functionality in a global object called 'D3'. Because this library is loaded through a _script_tag (instead of a module loader), its declaration uses internal modules to define its shape. For the TypeScript compiler to see this shape, we use an ambient internal module declaration. For example:
 
 ###### D3.d.ts (simplified excerpt)
-<div><pre>declare module D3 {
-    export interface Selectors {
-        select: {
-            (selector: string): Selection;
-            (element: EventTarget): Selection;
-        };
+    
+    declare module D3 {
+        export interface Selectors {
+            select: {
+                (selector: string): Selection;
+                (element: EventTarget): Selection;
+            };
+        }
+
+        export interface Event {
+            x: number;
+            y: number;
+        }
+
+        export interface Base extends Selectors {
+            event: Event;
+        }
     }
 
-    export interface Event {
-        x: number;
-        y: number;
-    }
-
-    export interface Base extends Selectors {
-        event: Event;
-    }
-}
-
-declare var d3: D3.Base;
-</pre></div>
+    declare var d3: D3.Base;
 
 #### Ambient External Modules
 
 In node.js, most tasks are accomplished by loading one or more modules. We could define each module in its own .d.ts file with top-level export declarations, but it's more convenient to write them as one larger .d.ts file. To do so, we use the quoted name of the module, which will be available to a later import. For example:
 
 ###### node.d.ts (simplified excerpt)
-<div><pre>declare module "url" {
-    export interface Url {
-        protocol?: string;
-        hostname?: string;
-        pathname?: string;
+    
+    declare module "url" {
+        export interface Url {
+            protocol?: string;
+            hostname?: string;
+            pathname?: string;
+        }
+
+        export function parse(urlStr: string, parseQueryString?, slashesDenoteHost?): Url;
     }
 
-    export function parse(urlStr: string, parseQueryString?, slashesDenoteHost?): Url;
-}
-
-declare module "path" {
-    export function normalize(p: string): string;
-    export function join(...paths: any[]): string;
-    export var sep: string;
-}
-</pre></div>
+    declare module "path" {
+        export function normalize(p: string): string;
+        export function join(...paths: any[]): string;
+        export var sep: string;
+    }
 
 Now we can _/// <reference>_ node.d.ts and then load the modules using e.g. _import url = require('url');_.
 
-<div><pre>///<reference path="node.d.ts"/>
-import url = require("url");
-var myUrl = url.parse("http://www.typescriptlang.org");
-</pre></div>
+    ///<reference path="node.d.ts"/>
+    import url = require("url");
+    var myUrl = url.parse("http://www.typescriptlang.org");
 
 ## Pitfalls of Modules
 
@@ -1243,16 +1242,16 @@ The second is by finding a .d.ts file, similar to above, except that instead of 
 The final way is by seeing an "ambient external module declaration", where we 'declare' a module with a matching quoted name.
 
 ###### myModules.d.ts
-<div><pre>// In a .d.ts file or .ts file that is not an external module:
-declare module "SomeModule" {
-    export function fn(): string;
-}
-</pre></div>
+    
+    // In a .d.ts file or .ts file that is not an external module:
+    declare module "SomeModule" {
+        export function fn(): string;
+    }
 
 ###### myOtherModule.ts
-<div><pre>/// <reference path="myModules.d.ts" />
-import m = require("SomeModule");
-</pre></div>
+
+    /// <reference path="myModules.d.ts" />
+    import m = require("SomeModule");
 
 The reference tag here allows us to locate the declaration file that contains the declaration for the ambient external module. This is how the node.d.ts file that several of the TypeScript samples use is consumed, for example.
 
@@ -1261,18 +1260,18 @@ The reference tag here allows us to locate the declaration file that contains th
 If you're converting a program from internal modules to external modules, it can be easy to end up with a file that looks like this:
 
 ###### shapes.ts
-<div><pre>export module Shapes {
-    export class Triangle { /* ... */ }
-    export class Square { /* ... */ }
-}
-</pre></div>
+    
+    export module Shapes {
+        export class Triangle { /* ... */ }
+        export class Square { /* ... */ }
+    }
 
 The top-level module here _Shapes_ wraps up _Triangle_ and _Square_ for no reason. This is confusing and annoying for consumers of your module:
 
 ###### shapeConsumer.ts
-<div><pre>import shapes = require('./shapes');
-var t = new shapes.Shapes.Triangle(); // shapes.Shapes?
-</pre></div>
+
+    import shapes = require('./shapes');
+    var t = new shapes.Shapes.Triangle(); // shapes.Shapes?
 
 A key feature of external modules in TypeScript is that two different external modules will never contribute names to the same scope. Because the consumer of an external module decides what name to assign it, there's no need to proactively wrap up the exported symbols in a namespace.
 
@@ -1281,14 +1280,14 @@ To reiterate why you shouldn't try to namespace your external module contents, t
 Revised Example:
 
 ###### shapes.ts
-<div><pre>export class Triangle { /* ... */ }
-export class Square { /* ... */ }
-</pre></div>
+
+    export class Triangle { /* ... */ }
+    export class Square { /* ... */ }
 
 ###### shapeConsumer.ts
-<div><pre>import shapes = require('./shapes');
-var t = new shapes.Triangle(); 
-</pre></div>
+
+    import shapes = require('./shapes');
+    var t = new shapes.Triangle(); 
 
 #### Trade-offs for External Modules
 
@@ -1306,23 +1305,21 @@ To begin, just as in JavaScript, TypeScript functions can be created both as a n
 
 To quickly recap what these two approaches look like in JavaScript:
 
-<div><pre>//Named function
-function add(x, y) {
-    return x+y;
-}
+    //Named function
+    function add(x, y) {
+        return x+y;
+    }
 
-//Anonymous function
-var myAdd = function(x, y) { return x+y; };
-</pre></div>
+    //Anonymous function
+    var myAdd = function(x, y) { return x+y; };
 
 Just as in JavaScript, functions can return to variables outside of the function body. When they do so, they're said to 'capture' these variables. While understanding how this works, and the trade-offs when using this technique, are outside of the scope of this article, having a firm understanding how this mechanic is an important piece of working with JavaScript and TypeScript. 
 
-<div><pre>var z = 100;
+    var z = 100;
 
-function addToZ(x, y) {
-    return x+y+z;
-}
-</pre></div>
+    function addToZ(x, y) {
+        return x+y+z;
+    }
 
 ## Function Types
 
@@ -1330,12 +1327,11 @@ function addToZ(x, y) {
 
 Let's add types to our simple examples from earlier:
 
-<div><pre>function add(x: number, y: number): number {
-    return x+y;
-}
+    function add(x: number, y: number): number {
+        return x+y;
+    }
 
-var myAdd = function(x: number, y: number): number { return x+y; };
-</pre></div>
+    var myAdd = function(x: number, y: number): number { return x+y; };
 
 We can add types to each of the parameters and then to the function itself to add a return type. TypeScript can figure the return type out by looking at the return statements, so we can also optionally leave this off in many cases.
 
@@ -1343,15 +1339,13 @@ We can add types to each of the parameters and then to the function itself to ad
 
 Now that we've typed the function, let's write the full type of the function out by looking at the each piece of the function type. 
 
-<div><pre>var myAdd: (x:number, y:number)=>number = 
-    function(x: number, y: number): number { return x+y; };
-</pre></div>
+    var myAdd: (x:number, y:number)=>number = 
+        function(x: number, y: number): number { return x+y; };
 
 A function's type has the same two parts: the type of the arguments and the return type. When writing out the whole function type, both parts are required. We write out the parameter types just like a parameter list, giving each parameter a name and a type. This name is just to help with readability. We could have instead written:
 
-<div><pre>var myAdd: (baseValue:number, increment:number)=>number = 
-    function(x: number, y: number): number { return x+y; };
-</pre></div>
+    var myAdd: (baseValue:number, increment:number)=>number = 
+        function(x: number, y: number): number { return x+y; };
 
 As long as the parameter types line up, it's considered a valid type for the function, regardless of the names you give the parameters in the function type. 
 
@@ -1363,13 +1357,12 @@ Of note, only the parameters and the return type make up the function type. Capt
 
 In playing with the example, you may notice that the TypeScript compiler can figure out the type if you have types on one side of the equation but not the other:
 
-<div><pre>// myAdd has the full function type
-var myAdd = function(x: number, y: number): number { return x+y; };
+    // myAdd has the full function type
+    var myAdd = function(x: number, y: number): number { return x+y; };
 
-// The parameters 'x' and 'y' have the type number
-var myAdd: (baseValue:number, increment:number)=>number = 
-    function(x, y) { return x+y; };
-</pre></div>
+    // The parameters 'x' and 'y' have the type number
+    var myAdd: (baseValue:number, increment:number)=>number = 
+        function(x, y) { return x+y; };
 
 This is called 'contextual typing', a form of type inference. This helps cut down on the amount of effort to keep your program typed.
 
@@ -1377,53 +1370,48 @@ This is called 'contextual typing', a form of type inference. This helps cut dow
 
 Unlike JavaScript, in TypeScript every parameter to a function is assumed to be required by the function. This doesn't mean that it isn't a 'null' value, but rather, when the function is called the compiler will check that the user has provided a value for each parameter. The compiler also assumes that these parameters are the only parameters that will be passed to the function. In short, the number of parameters to the function has to match the number of parameters the function expects.
 
-<div><pre>function buildName(firstName: string, lastName: string) {
-    return firstName + " " + lastName;
-}
+    function buildName(firstName: string, lastName: string) {
+        return firstName + " " + lastName;
+    }
 
-var result1 = buildName("Bob");  //error, too few parameters
-var result2 = buildName("Bob", "Adams", "Sr.");  //error, too many parameters
-var result3 = buildName("Bob", "Adams");  //ah, just right
-</pre></div>
+    var result1 = buildName("Bob");  //error, too few parameters
+    var result2 = buildName("Bob", "Adams", "Sr.");  //error, too many parameters
+    var result3 = buildName("Bob", "Adams");  //ah, just right
 
 In JavaScript, every parameter is considered optional, and users may leave them off as they see fit. When they do, they're assumed to be undefined. We can get this functionality in TypeScript by using the '?' beside parameters we want optional. For example, let's say we want the last name to be optional:
 
-<div><pre>function buildName(firstName: string, lastName?: string) {
-    if (lastName)
-        return firstName + " " + lastName;
-    else
-        return firstName;
-}
+    function buildName(firstName: string, lastName?: string) {
+        if (lastName)
+            return firstName + " " + lastName;
+        else
+            return firstName;
+    }
 
-var result1 = buildName("Bob");  //works correctly now
-var result2 = buildName("Bob", "Adams", "Sr.");  //error, too many parameters
-var result3 = buildName("Bob", "Adams");  //ah, just right
-</pre></div>
+    var result1 = buildName("Bob");  //works correctly now
+    var result2 = buildName("Bob", "Adams", "Sr.");  //error, too many parameters
+    var result3 = buildName("Bob", "Adams");  //ah, just right
 
 Optional parameters must follow required parameters. Had we wanted to make the first name optional rather than the last name, we would need to change the order of parameters in the function, putting the first name last in the list.
 
 In TypeScript, we can also set up a value that an optional parameter will have if the user does not provide one. These are called default parameters. Let's take the previous example and default the last name to "Smith".
 
-<div><pre>function buildName(firstName: string, lastName = "Smith") {
-    return firstName + " " + lastName;
-}
+    function buildName(firstName: string, lastName = "Smith") {
+        return firstName + " " + lastName;
+    }
 
-var result1 = buildName("Bob");  //works correctly now, also
-var result2 = buildName("Bob", "Adams", "Sr.");  //error, too many parameters
-var result3 = buildName("Bob", "Adams");  //ah, just right
-</pre></div>
+    var result1 = buildName("Bob");  //works correctly now, also
+    var result2 = buildName("Bob", "Adams", "Sr.");  //error, too many parameters
+    var result3 = buildName("Bob", "Adams");  //ah, just right
 
 Just as with optional parameters, default parameters must come after required parameters in the parameter list. 
 
 Optional parameters and default parameters also share what the type looks like. Both:
 
-<div><pre>function buildName(firstName: string, lastName?: string) {
-</pre></div>
+    function buildName(firstName: string, lastName?: string) {
 
 and
 
-<div><pre>function buildName(firstName: string, lastName = "Smith") {
-</pre></div>
+    function buildName(firstName: string, lastName = "Smith") {
 
 share the same type "(firstName: string, lastName?: string)=>string". The default value of the default parameter disappears, leaving only the knowledge that the parameter is optional.
 
@@ -1433,23 +1421,21 @@ Required, optional, and default parameters all have one thing in common: they're
 
 In TypeScript, you can gather these arguments together into a variable:
 
-<div><pre>function buildName(firstName: string, ...restOfName: string[]) {
-    return firstName + " " + restOfName.join(" ");
-}
+    function buildName(firstName: string, ...restOfName: string[]) {
+        return firstName + " " + restOfName.join(" ");
+    }
 
-var employeeName = buildName("Joseph", "Samuel", "Lucas", "MacKinzie");
-</pre></div>
+    var employeeName = buildName("Joseph", "Samuel", "Lucas", "MacKinzie");
 
 Rest parameters are treated as a boundless number of optional parameters. You may leave them off, or have as many as you want. The compiler will build an array of the arguments you pass to the function under the name given after the ellipsis (...), allowing you to use it in your function. 
 
 The ellipsis is also used in the type of the function with rest parameters:
 
-<div><pre>function buildName(firstName: string, ...restOfName: string[]) {
-    return firstName + " " + restOfName.join(" ");
-}
+    function buildName(firstName: string, ...restOfName: string[]) {
+        return firstName + " " + restOfName.join(" ");
+    }
 
-var buildNameFun: (fname: string, ...rest: string[])=>string = buildName;
-</pre></div>
+    var buildNameFun: (fname: string, ...rest: string[])=>string = buildName;
 
 ## Lambdas and using 'this'
 
@@ -1459,24 +1445,23 @@ In JavaScript, 'this' is a variable that's set when a function is called. This m
 
 Let's look at an example:
 
-<div><pre>var deck = {
-    suits: ["hearts", "spades", "clubs", "diamonds"],
-    cards: Array(52),
-    createCardPicker: function() {
-        return function() {
-            var pickedCard = Math.floor(Math.random() * 52);
-            var pickedSuit = Math.floor(pickedCard / 13);
+    var deck = {
+        suits: ["hearts", "spades", "clubs", "diamonds"],
+        cards: Array(52),
+        createCardPicker: function() {
+            return function() {
+                var pickedCard = Math.floor(Math.random() * 52);
+                var pickedSuit = Math.floor(pickedCard / 13);
 
-            return {suit: this.suits[pickedSuit], card: pickedCard % 13};
+                return {suit: this.suits[pickedSuit], card: pickedCard % 13};
+            }
         }
     }
-}
 
-var cardPicker = deck.createCardPicker();
-var pickedCard = cardPicker();
+    var cardPicker = deck.createCardPicker();
+    var pickedCard = cardPicker();
 
-alert("card: " + pickedCard.card + " of " + pickedCard.suit);
-</pre></div>
+    alert("card: " + pickedCard.card + " of " + pickedCard.suit);
 
 If we tried to run the example, we would get an error instead of the expected alert box. This is because the 'this' being used in the function created by 'createCardPicker' will be set to 'window' instead of our 'deck' object. This happens as a result of calling 'cardPicker()'. Here, there is no dynamic binding for 'this' other than Window. (note: under strict mode, this will be undefined rather than window).
 
@@ -1484,25 +1469,24 @@ We can fix this by making sure the function is bound to the correct 'this' befor
 
 To fix this, we switching the function expression to use the lambda syntax ( ()=>{} ) rather than the JavaScript function expression. This will automatically capture the 'this' available when the function is created rather than when it is invoked:
 
-<div><pre>var deck = {
-    suits: ["hearts", "spades", "clubs", "diamonds"],
-    cards: Array(52),
-    createCardPicker: function() {
-        // Notice: the line below is now a lambda, allowing us to capture 'this' earlier
-        return () => {
-            var pickedCard = Math.floor(Math.random() * 52);
-            var pickedSuit = Math.floor(pickedCard / 13);
+    var deck = {
+        suits: ["hearts", "spades", "clubs", "diamonds"],
+        cards: Array(52),
+        createCardPicker: function() {
+            // Notice: the line below is now a lambda, allowing us to capture 'this' earlier
+            return () => {
+                var pickedCard = Math.floor(Math.random() * 52);
+                var pickedSuit = Math.floor(pickedCard / 13);
 
-            return {suit: this.suits[pickedSuit], card: pickedCard % 13};
+                return {suit: this.suits[pickedSuit], card: pickedCard % 13};
+            }
         }
     }
-}
 
-var cardPicker = deck.createCardPicker();
-var pickedCard = cardPicker();
+    var cardPicker = deck.createCardPicker();
+    var pickedCard = cardPicker();
 
-alert("card: " + pickedCard.card + " of " + pickedCard.suit);
-</pre></div>
+    alert("card: " + pickedCard.card + " of " + pickedCard.suit);
 
 For more information on ways to think about 'this', you can read Yahuda Katz's [Understanding JavaScript Function Invocation and “this”](http://yehudakatz.com/2011/08/11/understanding-javascript-function-invocation-and-this/).
 
@@ -1510,59 +1494,57 @@ For more information on ways to think about 'this', you can read Yahuda Katz's 
 
 JavaScript is inherently a very dynamic language. It's not uncommon for a single JavaScript function to return different types of objects based on the shape of the arguments passed in. 
 
-<div><pre>var suits = ["hearts", "spades", "clubs", "diamonds"];
+    var suits = ["hearts", "spades", "clubs", "diamonds"];
 
-function pickCard(x): any {
-    // Check to see if we're working with an object/array
-    // if so, they gave us the deck and we'll pick the card
-    if (typeof x == "object") {
-        var pickedCard = Math.floor(Math.random() * x.length);
-        return pickedCard;
+    function pickCard(x): any {
+        // Check to see if we're working with an object/array
+        // if so, they gave us the deck and we'll pick the card
+        if (typeof x == "object") {
+            var pickedCard = Math.floor(Math.random() * x.length);
+            return pickedCard;
+        }
+        // Otherwise just let them pick the card
+        else if (typeof x == "number") {
+            var pickedSuit = Math.floor(x / 13);
+            return { suit: suits[pickedSuit], card: x % 13 };
+        }
     }
-    // Otherwise just let them pick the card
-    else if (typeof x == "number") {
-        var pickedSuit = Math.floor(x / 13);
-        return { suit: suits[pickedSuit], card: x % 13 };
-    }
-}
 
-var myDeck = [{ suit: "diamonds", card: 2 }, { suit: "spades", card: 10 }, { suit: "hearts", card: 4 }];
-var pickedCard1 = myDeck[pickCard(myDeck)];
-alert("card: " + pickedCard1.card + " of " + pickedCard1.suit);
+    var myDeck = [{ suit: "diamonds", card: 2 }, { suit: "spades", card: 10 }, { suit: "hearts", card: 4 }];
+    var pickedCard1 = myDeck[pickCard(myDeck)];
+    alert("card: " + pickedCard1.card + " of " + pickedCard1.suit);
 
-var pickedCard2 = pickCard(15);
-alert("card: " + pickedCard2.card + " of " + pickedCard2.suit);
-</pre></div>
+    var pickedCard2 = pickCard(15);
+    alert("card: " + pickedCard2.card + " of " + pickedCard2.suit);
 
 Here the 'pickCard' function will return two different things based on what the user has passed in. If the users passes in an object that represents the deck, the function will pick the card. If the user picks the card, we tell them which card they've picked. But how do we describe this to the type system.
 
 The answer is to supply multiple function types for the same function as a list of overloads. This list is what the compiler will use to resolve function calls. Let's create a list of overloads that describe what our 'pickCard' accepts and what it returns.
 
-<div><pre>var suits = ["hearts", "spades", "clubs", "diamonds"];
+    var suits = ["hearts", "spades", "clubs", "diamonds"];
 
-function pickCard(x: {suit: string; card: number; }[]): number;
-function pickCard(x: number): {suit: string; card: number; };
-function pickCard(x): any {
-    // Check to see if we're working with an object/array
-    // if so, they gave us the deck and we'll pick the card
-    if (typeof x == "object") {
-        var pickedCard = Math.floor(Math.random() * x.length);
-        return pickedCard;
+    function pickCard(x: {suit: string; card: number; }[]): number;
+    function pickCard(x: number): {suit: string; card: number; };
+    function pickCard(x): any {
+        // Check to see if we're working with an object/array
+        // if so, they gave us the deck and we'll pick the card
+        if (typeof x == "object") {
+            var pickedCard = Math.floor(Math.random() * x.length);
+            return pickedCard;
+        }
+        // Otherwise just let them pick the card
+        else if (typeof x == "number") {
+            var pickedSuit = Math.floor(x / 13);
+            return { suit: suits[pickedSuit], card: x % 13 };
+        }
     }
-    // Otherwise just let them pick the card
-    else if (typeof x == "number") {
-        var pickedSuit = Math.floor(x / 13);
-        return { suit: suits[pickedSuit], card: x % 13 };
-    }
-}
 
-var myDeck = [{ suit: "diamonds", card: 2 }, { suit: "spades", card: 10 }, { suit: "hearts", card: 4 }];
-var pickedCard1 = myDeck[pickCard(myDeck)];
-alert("card: " + pickedCard1.card + " of " + pickedCard1.suit);
+    var myDeck = [{ suit: "diamonds", card: 2 }, { suit: "spades", card: 10 }, { suit: "hearts", card: 4 }];
+    var pickedCard1 = myDeck[pickCard(myDeck)];
+    alert("card: " + pickedCard1.card + " of " + pickedCard1.suit);
 
-var pickedCard2 = pickCard(15);
-alert("card: " + pickedCard2.card + " of " + pickedCard2.suit);
-</pre></div>
+    var pickedCard2 = pickCard(15);
+    alert("card: " + pickedCard2.card + " of " + pickedCard2.suit);
 
 With this change, the overloads now give us type-checked calls to the 'pickCard' function. 
 
@@ -1584,26 +1566,23 @@ To start off, let's do the "hello world" of generics: the identity function. The
 
 Without generics, we would either have to give the identity function a specific type:
 
-<div><pre>function identity(arg: number): number {
-    return arg;
-}
-</pre></div>
+    function identity(arg: number): number {
+        return arg;
+    }
 
 Or, we could describe the identity function using the 'any' type:
 
-<div><pre>function identity(arg: any): any {
-    return arg;
-}
-</pre></div>
+    function identity(arg: any): any {
+        return arg;
+    }
 
 While using 'any' is certainly generic in that will accept any and all types for the type of 'arg', we actually are losing the information about what that type was when the function returns. If we passed in a number, the only information we have is that any type could be returned. 
 
 Instead, we need a way of capturing the type of the argument in such a way that we can also use it to denote what is being returned. Here, we will use a _type variable_, a special kind of variable that works on types rather than values. 
 
-<div><pre>function identity<T>(arg: T): T {
-    return arg;
-}
-</pre></div>
+    function identity<T>(arg: T): T {
+        return arg;
+    }
 
 We've now added a type variable 'T' to the identity function. This 'T' allows us to capture the type the user provides (eg, number), so that we can use that information later. Here, we use 'T' again as the return type. On inspection, we can now see the same type is used for the argument and the return type. This allows us to traffic that type information in one side of the function and out the other.
 
@@ -1611,15 +1590,13 @@ We say that this version of the 'identity' function is generic, as it works over
 
 Once we've written the generic identity function, we can call it in one of two ways. The first way is to pass all of the arguments, including the type argument, to the function:
 
-<div><pre>var output = identity<string>("myString");  // type of output will be 'string'
-</pre></div>
+    var output = identity<string>("myString");  // type of output will be 'string'
 
 Here we explicitly set 'T' to be string as one of the arguments to the function call, denoted using the <> around the arguments rather than ().
 
 The second way is also perhaps the most common. Here we use /type argument inference/, that is, we want the compiler to set the value of T for us automatically based on the type of the argument we pass in:
 
-<div><pre>var output = identity("myString");  // type of output will be 'string'
-</pre></div>
+    var output = identity("myString");  // type of output will be 'string'
 
 Notice that we didn't have explicitly pass the type in the angle brackets (<>), the compiler just looked at the value "myString", and set T to its type. While type argument inference can be a helpful tool to keep code shorter and more readable, you may need to explicitly pass in the type arguments as we did in the previous example when the compiler fails to infer the type, as may happen in more complex examples.
 
@@ -1629,38 +1606,34 @@ When you begin to use generics, you'll notice that when you create generic funct
 
 Let's take our 'identity' function from earlier:
 
-<div><pre>function identity<T>(arg: T): T {
-    return arg;
-}
-</pre></div>
+    function identity<T>(arg: T): T {
+        return arg;
+    }
 
 What if want to also log the length of the argument 'arg' to the console with each call. We might be tempted to write this:
 
-<div><pre>function loggingIdentity<T>(arg: T): T {
-    console.log(arg.length);  // Error: T doesn't have .length
-    return arg;
-}
-</pre></div>
+    function loggingIdentity<T>(arg: T): T {
+        console.log(arg.length);  // Error: T doesn't have .length
+        return arg;
+    }
 
 When we do, the compiler will give us an error that we're using the ".length" member of 'arg', but nowhere have we said that 'arg' has this member. Remember, we said earlier that these type variables stand in for any and all types, so someone using this function could have passed in a 'number' instead, which does not have a ".length" member. 
 
 Let's say that we've actually intended this function to work on arrays of T rather that T directly. Since we're working with arrays, the .length member should be available. We can describe this just like we would create arrays of other types:
 
-<div><pre>function loggingIdentity<T>(arg: T[]): T[] {
-    console.log(arg.length);  // Array has a .length, so no more error
-    return arg;
-}
-</pre></div>
+    function loggingIdentity<T>(arg: T[]): T[] {
+        console.log(arg.length);  // Array has a .length, so no more error
+        return arg;
+    }
 
 You can read the type of logging Identity as "the generic function loggingIdentity, takes a type parameter T, and an argument 'arg' which is an array of these T's, and returns an array of T's. If we passed in an array of numbers, we'd get an array of numbers back out, as T would bind to number. This allows us to use our generic type variable 'T' as part of the types we're working with, rather than the whole type, giving us greater flexibility. 
 
 We can alternatively write the sample example this way:
 
-<div><pre>function loggingIdentity<T>(arg: Array<T>): Array<T> {
-    console.log(arg.length);  // Array has a .length, so no more error
-    return arg;
-}
-</pre></div>
+    function loggingIdentity<T>(arg: Array<T>): Array<T> {
+        console.log(arg.length);  // Array has a .length, so no more error
+        return arg;
+    }
 
 You may already be familiar with this style of type from other languages. In the next section, we'll cover how you can create your own generic types like Array<T>.
 
@@ -1670,56 +1643,51 @@ In previous sections, we created generic identity functions that worked over a r
 
 The type of generic functions is just like those of non-generic functions, with the type parameters listed first, similarly to function declarations:
 
-<div><pre>function identity<T>(arg: T): T {
-    return arg;
-}
+    function identity<T>(arg: T): T {
+        return arg;
+    }
 
-var myIdentity: <T>(arg: T)=>T = identity;
-</pre></div>
+    var myIdentity: <T>(arg: T)=>T = identity;
 
 We could also have used a different name for the generic type parameter in the type, so long as the number of type variables and how the type variables are used line up.
 
-<div><pre>function identity<T>(arg: T): T {
-    return arg;
-}
+    function identity<T>(arg: T): T {
+        return arg;
+    }
 
-var myIdentity: <U>(arg: U)=>U = identity;
-</pre></div>
+    var myIdentity: <U>(arg: U)=>U = identity;
 
 We can also write the generic type as a call signature of an object literal type:
 
-<div><pre>function identity<T>(arg: T): T {
-    return arg;
-}
+    function identity<T>(arg: T): T {
+        return arg;
+    }
 
-var myIdentity: {<T>(arg: T): T} = identity;
-</pre></div>
+    var myIdentity: {<T>(arg: T): T} = identity;
 
 Which leads us to writing our first generic interface. Let's take the object literal from the previous example and move it to an interface:
 
-<div><pre>interface GenericIdentityFn {
-    <T>(arg: T): T;
-}
+    interface GenericIdentityFn {
+        <T>(arg: T): T;
+    }
 
-function identity<T>(arg: T): T {
-    return arg;
-}
+    function identity<T>(arg: T): T {
+        return arg;
+    }
 
-var myIdentity: GenericIdentityFn = identity;
-</pre></div>
+    var myIdentity: GenericIdentityFn = identity;
 
 In a similar example, we may want to move the generic parameter to be a parameter of the whole interface. This lets us see what type(s) we're generic over (eg Dictionary<string> rather than just Dictionary). This makes the type parameter visible to all the other members of the interface. 
 
-<div><pre>interface GenericIdentityFn<T> {
-    (arg: T): T;
-}
+    interface GenericIdentityFn<T> {
+        (arg: T): T;
+    }
 
-function identity<T>(arg: T): T {
-    return arg;
-}
+    function identity<T>(arg: T): T {
+        return arg;
+    }
 
-var myIdentity: GenericIdentityFn<number> = identity;
-</pre></div>
+    var myIdentity: GenericIdentityFn<number> = identity;
 
 Notice that our example has changed to be something slightly different. Instead of describing a generic function, we now have a non-generic function signature that is a part of a generic type. When we use GenericIdentityFn, we now will also need to specify the corresponding type argument (here: number), effectively locking in what the underlying call signature will use. Understanding when to put the type parameter directly on the call signature and when to put it on the interface itself will be helpful in describing what aspects of a type are generic.
 
@@ -1729,24 +1697,22 @@ In addition to generic interfaces, we can also create generic classes. Note that
 
 A generic class has a similar shape to a generic interface. Generic classes have a generic type parameter list in angle brackets (<>) following the name of the class.
 
-<div><pre>class GenericNumber<T> {
-    zeroValue: T;
-    add: (x: T, y: T) => T;
-}
+    class GenericNumber<T> {
+        zeroValue: T;
+        add: (x: T, y: T) => T;
+    }
 
-var myGenericNumber = new GenericNumber<number>();
-myGenericNumber.zeroValue = 0;
-myGenericNumber.add = function(x, y) { return x + y; };
-</pre></div>
+    var myGenericNumber = new GenericNumber<number>();
+    myGenericNumber.zeroValue = 0;
+    myGenericNumber.add = function(x, y) { return x + y; };
 
 This is a pretty literal use of the 'GenericNumber' class, but you may have noticed that nothing is restricting is to only use the 'number' type. We could have instead used 'string' or even more complex objects.
 
-<div><pre>var stringNumeric = new GenericNumber<string>();
-stringNumeric.zeroValue = "";
-stringNumeric.add = function(x, y) { return x + y; };
+    var stringNumeric = new GenericNumber<string>();
+    stringNumeric.zeroValue = "";
+    stringNumeric.add = function(x, y) { return x + y; };
 
-alert(stringNumeric.add(stringNumeric.zeroValue, "test"));
-</pre></div>
+    alert(stringNumeric.add(stringNumeric.zeroValue, "test"));
 
 Just as with interface, putting the type parameter on the class itself lets us make sure all of the properties of the class are working with the same type.
 
@@ -1756,53 +1722,47 @@ As we covered in [Classes](https://typescript.codeplex.com/wikipage?title=Class
 
 If you remember from an earlier example, you may sometimes want to write a generic function that works on a set of types where you have some knowledge about what capabilities that set of types will have. In our 'loggingIdentity' example, we wanted to be able access the ".length" property of 'arg', but the compiler could not prove that every type had a ".length" property, so it warns us that we can't make this assumption.
 
-<div><pre>function loggingIdentity<T>(arg: T): T {
-    console.log(arg.length);  // Error: T doesn't have .length
-    return arg;
-}
-</pre></div>
+    function loggingIdentity<T>(arg: T): T {
+        console.log(arg.length);  // Error: T doesn't have .length
+        return arg;
+    }
 
 Instead of working with any and all types, we'd like to constrain this function to work with any and all types that also have the ".length" property. As long as the type has this member, we'll allow it, but it's required to have at least this member. To do so, we must list our requirement as a constraint on what T can be.
 
 To do so, we'll create an interface that describes our constraint. Here, we'll create an interface that has a single ".length" property and then we'll use this interface and the extends keyword to denote our constraint:
 
-<div><pre>interface Lengthwise {
-    length: number;
-}
+    interface Lengthwise {
+        length: number;
+    }
 
-function loggingIdentity<T extends Lengthwise>(arg: T): T {
-    console.log(arg.length);  // Now we know it has a .length property, so no more error
-    return arg;
-}
-</pre></div>
+    function loggingIdentity<T extends Lengthwise>(arg: T): T {
+        console.log(arg.length);  // Now we know it has a .length property, so no more error
+        return arg;
+    }
 
 Because the generic function is now constrained, it will no longer work over any and all types:
 
-<div><pre>loggingIdentity(3);  // Error, number doesn't have a .length property
-</pre></div>
+    loggingIdentity(3);  // Error, number doesn't have a .length property
 
 Instead, we need to pass in values whose type has all the required properties:
 
-<div><pre>loggingIdentity({length: 10, value: 3});  
-</pre></div>
+    loggingIdentity({length: 10, value: 3});  
 
 ### Using Type Parameters in Generic Constraints
 
 In some cases, it may be useful to declare a type parameter that is constrained by another type parameter. For example,
 
-<div><pre>function find<T, U extends Findable<T>>(n: T, s: U) {   // errors because type parameter used in constraint
-  // ...
-} 
-find (giraffe, myAnimals);
-</pre></div>
+    function find<T, U extends Findable<T>>(n: T, s: U) {   // errors because type parameter used in constraint
+      // ...
+    } 
+    find (giraffe, myAnimals);
 
 You can achieve the pattern above by replacing the type parameter with its constraint. Rewriting the example above,
 
-<div><pre>function find<T>(n: T, s: Findable<T>) {   
-  // ...
-} 
-find(giraffe, myAnimals);
-</pre></div>
+    function find<T>(n: T, s: Findable<T>) {   
+      // ...
+    } 
+    find(giraffe, myAnimals);
 
 _Note:_ The above is not strictly identical, as the return type of the first function could have returned 'U', which the second function pattern does not provide a means to do.
 
@@ -1810,41 +1770,39 @@ _Note:_ The above is not strictly identical, as the return type of the first fu
 
 When creating factories in TypeScript using generics, it is necessary to refer to class types by their constructor functions. For example,
 
-<div><pre>function create<T>(c: {new(): T; }): T { 
-    return new c();
-}
-</pre></div>
+    function create<T>(c: {new(): T; }): T { 
+        return new c();
+    }
 
 A more advanced example uses the prototype property to infer and constrain relationships between the constructor function and the instance side of class types.
 
-<div><pre>class BeeKeeper {
-    hasMask: boolean;
-}
+    class BeeKeeper {
+        hasMask: boolean;
+    }
 
-class ZooKeeper {
-    nametag: string; 
-}
+    class ZooKeeper {
+        nametag: string; 
+    }
 
-class Animal {
-    numLegs: number;
-}
+    class Animal {
+        numLegs: number;
+    }
 
-class Bee extends Animal {
-    keeper: BeeKeeper;
-}
+    class Bee extends Animal {
+        keeper: BeeKeeper;
+    }
 
-class Lion extends Animal {
-    keeper: ZooKeeper;
-}
+    class Lion extends Animal {
+        keeper: ZooKeeper;
+    }
 
-function findKeeper<A extends Animal, K> (a: {new(): A; 
-    prototype: {keeper: K}}): K {
+    function findKeeper<A extends Animal, K> (a: {new(): A; 
+        prototype: {keeper: K}}): K {
 
-    return a.prototype.keeper;
-}
+        return a.prototype.keeper;
+    }
 
-findKeeper(Lion).nametag;  // typechecks!
-</pre></div>
+    findKeeper(Lion).nametag;  // typechecks!
 
 # Common Errors
 
@@ -1874,34 +1832,91 @@ Along with traditional OO hierarchies, another popular way of building up classe
 
 In the code below, we show how you can model mixins in TypeScript. After the code, we'll break down how it works.
 
-<div><pre>// Disposable Mixin
-class Disposable {
-    isDisposed: boolean;
-    dispose() {
-        this.isDisposed = true;
+    // Disposable Mixin
+    class Disposable {
+        isDisposed: boolean;
+        dispose() {
+            this.isDisposed = true;
+        }
+
     }
 
-}
-
-// Activatable Mixin
-class Activatable {
-    isActive: boolean;
-    activate() {
-        this.isActive = true;
-    }
-    deactivate() {
-        this.isActive = false;
-    }
-}
-
-class SmartObject implements Disposable, Activatable {
-    constructor() {
-        setInterval(() => console.log(this.isActive + " : " + this.isDisposed), 500);
+    // Activatable Mixin
+    class Activatable {
+        isActive: boolean;
+        activate() {
+            this.isActive = true;
+        }
+        deactivate() {
+            this.isActive = false;
+        }
     }
 
-    interact() {
-        this.activate();
+    class SmartObject implements Disposable, Activatable {
+        constructor() {
+            setInterval(() => console.log(this.isActive + " : " + this.isDisposed), 500);
+        }
+
+        interact() {
+            this.activate();
+        }
+
+        // Disposable
+        isDisposed: boolean = false;
+        dispose: () => void;
+        // Activatable
+        isActive: boolean = false;
+        activate: () => void;
+        deactivate: () => void;
     }
+    applyMixins(SmartObject, [Disposable, Activatable])
+
+    var smartObj = new SmartObject();
+    setTimeout(() => smartObj.interact(), 1000);
+
+    ////////////////////////////////////////
+    // In your runtime library somewhere
+    ////////////////////////////////////////
+
+    function applyMixins(derivedCtor: any, baseCtors: any[]) {
+        baseCtors.forEach(baseCtor => {
+            Object.getOwnPropertyNames(baseCtor.prototype).forEach(name => {
+                derivedCtor.prototype[name] = baseCtor.prototype[name];
+            })
+        }); 
+    }
+
+## Understanding the sample
+
+The code sample starts with the two classes that will act is our mixins. You can see each one is focused on a particular activity or capability. We'll later mix these together to form a new class from both capabilities.
+
+    // Disposable Mixin
+    class Disposable {
+        isDisposed: boolean;
+        dispose() {
+            this.isDisposed = true;
+        }
+
+    }
+
+    // Activatable Mixin
+    class Activatable {
+        isActive: boolean;
+        activate() {
+            this.isActive = true;
+        }
+        deactivate() {
+            this.isActive = false;
+        }
+    }
+
+Next, we'll create the class that will handle the combination of the two mixins. Let's look at this in more detail to see how it does this:
+
+    class SmartObject implements Disposable, Activatable {
+
+The first thing you may notice in the above is that instead of using 'extends', we use 'implements'. This treats the classes as interfaces, and only uses the types behind Disposable and Activatable rather than the implementation. This means that we'll have to provide the implementation in class. Except, that's exactly what we want to avoid by using mixins. 
+
+To satisfy this requirement, we create stand-in properties and their types for the members that will come from our mixins. This satisfies the compiler that these members will be available at runtime. This lets us still get the benefit of the mixins, albeit with a some bookkeeping overhead.
 
     // Disposable
     isDisposed: boolean = false;
@@ -1910,84 +1925,20 @@ class SmartObject implements Disposable, Activatable {
     isActive: boolean = false;
     activate: () => void;
     deactivate: () => void;
-}
-applyMixins(SmartObject, [Disposable, Activatable])
-
-var smartObj = new SmartObject();
-setTimeout(() => smartObj.interact(), 1000);
-
-////////////////////////////////////////
-// In your runtime library somewhere
-////////////////////////////////////////
-
-function applyMixins(derivedCtor: any, baseCtors: any[]) {
-    baseCtors.forEach(baseCtor => {
-        Object.getOwnPropertyNames(baseCtor.prototype).forEach(name => {
-            derivedCtor.prototype[name] = baseCtor.prototype[name];
-        })
-    }); 
-}
-</pre></div>
-
-## Understanding the sample
-
-The code sample starts with the two classes that will act is our mixins. You can see each one is focused on a particular activity or capability. We'll later mix these together to form a new class from both capabilities.
-
-<div><pre>// Disposable Mixin
-class Disposable {
-    isDisposed: boolean;
-    dispose() {
-        this.isDisposed = true;
-    }
-
-}
-
-// Activatable Mixin
-class Activatable {
-    isActive: boolean;
-    activate() {
-        this.isActive = true;
-    }
-    deactivate() {
-        this.isActive = false;
-    }
-}
-</pre></div>
-
-Next, we'll create the class that will handle the combination of the two mixins. Let's look at this in more detail to see how it does this:
-
-<div><pre>class SmartObject implements Disposable, Activatable {
-</pre></div>
-
-The first thing you may notice in the above is that instead of using 'extends', we use 'implements'. This treats the classes as interfaces, and only uses the types behind Disposable and Activatable rather than the implementation. This means that we'll have to provide the implementation in class. Except, that's exactly what we want to avoid by using mixins. 
-
-To satisfy this requirement, we create stand-in properties and their types for the members that will come from our mixins. This satisfies the compiler that these members will be available at runtime. This lets us still get the benefit of the mixins, albeit with a some bookkeeping overhead.
-
-<div><pre>// Disposable
-isDisposed: boolean = false;
-dispose: () => void;
-// Activatable
-isActive: boolean = false;
-activate: () => void;
-deactivate: () => void;
-</pre></div>
 
 Finally, we mix our mixins into the class, creating the full implementation.
 
-<div><pre>applyMixins(SmartObject, [Disposable, Activatable])
-</pre></div>
+    applyMixins(SmartObject, [Disposable, Activatable])
 
 Lastly, we create a helper function that will do the mixing for us. This will run through the properties of each of the mixins and copy them over to the target of the mixins, filling out the stand-in properties with their implementations.
 
-<div><pre>function applyMixins(derivedCtor: any, baseCtors: any[]) {
-    baseCtors.forEach(baseCtor => {
-        Object.getOwnPropertyNames(baseCtor.prototype).forEach(name => {
-            derivedCtor.prototype[name] = baseCtor.prototype[name];
-        })
-    }); 
-}
-
-</pre></div>
+    function applyMixins(derivedCtor: any, baseCtors: any[]) {
+        baseCtors.forEach(baseCtor => {
+            Object.getOwnPropertyNames(baseCtor.prototype).forEach(name => {
+                derivedCtor.prototype[name] = baseCtor.prototype[name];
+            })
+        }); 
+    }
 
 # Declaration Merging
 
@@ -2009,17 +1960,16 @@ Understanding what is created with each declaration will help you understand wha
 
 The simplest, and perhaps most common, type of declaration merging is interface merging. At the most basic level, the merge mechanically joins the members of both declarations into a single interface with the same name.
 
-<div><pre>interface Box {
-    height: number;
-    width: number;
-}
+    interface Box {
+        height: number;
+        width: number;
+    }
 
-interface Box {
-    scale: number;
-}
+    interface Box {
+        scale: number;
+    }
 
-var box: Box = {height: 5, width: 6, scale: 10};
-</pre></div>
+    var box: Box = {height: 5, width: 6, scale: 10};
 
 Non-function members of the interfaces must be unique. The compiler will issue an error if the interfaces both declare a non-function member of the same name.
 
@@ -2027,29 +1977,27 @@ For function members, each function member of the same name is treated as descri
 
 That is, in the example:
 
-<div><pre>interface Document {
-    createElement(tagName: any): Element;
-}
-interface Document {
-    createElement(tagName: string): HTMLElement;
-}
-interface Document {
-    createElement(tagName: "div"): HTMLDivElement; 
-    createElement(tagName: "span"): HTMLSpanElement;
-    createElement(tagName: "canvas"): HTMLCanvasElement;
-}
-</pre></div>
+    interface Document {
+        createElement(tagName: any): Element;
+    }
+    interface Document {
+        createElement(tagName: string): HTMLElement;
+    }
+    interface Document {
+        createElement(tagName: "div"): HTMLDivElement; 
+        createElement(tagName: "span"): HTMLSpanElement;
+        createElement(tagName: "canvas"): HTMLCanvasElement;
+    }
 
 The two interfaces will merge to create a single declaration. Notice that the elements of each group maintains the same order, just the groups themselves are merged with later overload sets coming first:
 
-<div><pre>interface Document {
-    createElement(tagName: "div"): HTMLDivElement; 
-    createElement(tagName: "span"): HTMLSpanElement;
-    createElement(tagName: "canvas"): HTMLCanvasElement;
-    createElement(tagName: string): HTMLElement;
-    createElement(tagName: any): Element;
-}
-</pre></div>
+    interface Document {
+        createElement(tagName: "div"): HTMLDivElement; 
+        createElement(tagName: "span"): HTMLSpanElement;
+        createElement(tagName: "canvas"): HTMLCanvasElement;
+        createElement(tagName: string): HTMLElement;
+        createElement(tagName: any): Element;
+    }
 
 ## Merging Modules
 
@@ -2060,44 +2008,41 @@ To merge the namespaces, type definitions from exported interfaces declared in e
 To merge the value, at each declaration site, if a module already exists with the given name, it is further extended by taking the existing module and adding the exported members of the second module to the first. 
 
 The declaration merge of 'Animals' in this example:
-<div><pre>module Animals {
-    export class Zebra { }
-}
+    module Animals {
+        export class Zebra { }
+    }
 
-module Animals {
-    export interface Legged { numberOfLegs: number; }
-    export class Dog { }
-}
-</pre></div>
+    module Animals {
+        export interface Legged { numberOfLegs: number; }
+        export class Dog { }
+    }
 
 is equivalent to:
 
-<div><pre>module Animals {
-    export interface Legged { numberOfLegs: number; }
+    module Animals {
+        export interface Legged { numberOfLegs: number; }
 
-    export class Zebra { }
-    export class Dog { }
-}
-</pre></div>
+        export class Zebra { }
+        export class Dog { }
+    }
 
 This model of module merging is a helpful starting place, but to get a more complete picture we need to also understand what happens with non-exported members. Non-exported members are only visible in the original (un-merged) module. This means that after merging, merged members that came from other declarations can not see non-exported members.
 
 We can see this more clearly in this example:
 
-<div><pre>module Animal {
-    var haveMuscles = true;
+    module Animal {
+        var haveMuscles = true;
 
-    export function animalsHaveMuscles() {
-        return haveMuscles;
+        export function animalsHaveMuscles() {
+            return haveMuscles;
+        }
     }
-}
 
-module Animal {
-    export function doAnimalsHaveMuscles() {
-        return haveMuscles;  // <-- error, haveMuscles is not visible here
+    module Animal {
+        export function doAnimalsHaveMuscles() {
+            return haveMuscles;  // <-- error, haveMuscles is not visible here
+        }
     }
-}
-</pre></div>
 
 Because haveMuscles is not exported, only the animalsHaveMuscles function that shares the same un-merged module can see the symbol. The doAnimalsHaveMuscles function, even though it's part of the merged Animal module can not see this un-exported member.
 
@@ -2107,55 +2052,52 @@ Modules are flexible enough to also merge with other types of declarations. To d
 
 The first module merge we'll cover is merging a module with a class. This gives the user a way of describing inner classes.
 
-<div><pre>class Album {
-    label: Album.AlbumLabel;
-}
-module Album {
-    export class AlbumLabel { }
-}
-</pre></div>
+    class Album {
+        label: Album.AlbumLabel;
+    }
+    module Album {
+        export class AlbumLabel { }
+    }
 
 The visibility rules for merged members is the same as described in the 'Merging Modules' section, so we must export the AlbumLabel class for the merged class to see it. The end result is a class managed inside of another class. You can also use modules to add more static members to an existing class.
 
 In addition to the pattern of inner classes, you may also be familiar with JavaScript practice of creating a function and then extending the function further by adding properties onto the function. TypeScript uses declaration merging to build up definitions like this in a type-safe way. 
 
-<div><pre>function buildLabel(name: string): string {
-    return buildLabel.prefix + name + buildLabel.suffix;
-}
+    function buildLabel(name: string): string {
+        return buildLabel.prefix + name + buildLabel.suffix;
+    }
 
-module buildLabel {
-    export var suffix = "";
-    export var prefix = "Hello, ";
-}
+    module buildLabel {
+        export var suffix = "";
+        export var prefix = "Hello, ";
+    }
 
-alert(buildLabel("Sam Smith"));
-</pre></div>
+    alert(buildLabel("Sam Smith"));
 
 Similarly, modules can be used to extend enums with static members:
 
-<div><pre>enum Color {
-    red = 1,
-    green = 2,
-    blue = 4
-}
+    enum Color {
+        red = 1,
+        green = 2,
+        blue = 4
+    }
 
-module Color {
-    export function mixColor(colorName: string) {
-        if (colorName == "yellow") {
-            return Color.red + Color.green;
-        }
-        else if (colorName == "white") {
-            return Color.red + Color.green + Color.blue;
-        }
-        else if (colorName == "magenta") {
-            return Color.red + Color.blue;
-        }
-        else if (colorName == "cyan") {
-            return Color.green + Color.blue;
+    module Color {
+        export function mixColor(colorName: string) {
+            if (colorName == "yellow") {
+                return Color.red + Color.green;
+            }
+            else if (colorName == "white") {
+                return Color.red + Color.green + Color.blue;
+            }
+            else if (colorName == "magenta") {
+                return Color.red + Color.blue;
+            }
+            else if (colorName == "cyan") {
+                return Color.green + Color.blue;
+            }
         }
     }
-}
-</pre></div>
 
 ## Disallowed Merges
 
@@ -2171,8 +2113,7 @@ In this section, we will cover type inference in TypeScript. Namely, we'll discu
 
 In TypeScript, there are several places where type inference is used to provide type information when there is no explicit type annotation. For example, in this code
 
-<div><pre>var x = 3;
-</pre></div>
+    var x = 3;
 
 The type of the x variable is inferred to be number. This kind of inference takes place when initializing variables and members, setting parameter default values, and determining function return types.
 
@@ -2182,20 +2123,17 @@ In most cases, type inference is straightforward. In the following sections, we'
 
 When a type inference is made from several expressions, the types of those expressions are used to calculate a "best common type". For example,
 
-<div><pre>var x = [0, 1, null];
-</pre></div>
+    var x = [0, 1, null];
 
 To infer the type of x in the example above, we must consider the type of each array element. Here we are given two choices for the type of the array: number and null. The best common type algorithm considers each candidate type, and picks the type that is compatible with all the other candidates. 
 
 Because the best common type has to be chosen from the provided candidate types, there are some cases where types share a common structure, but no one type is the super type of all candidate types. For example:
 
-<div><pre>var zoo = [new Rhino(), new Elephant(), new Snake()];
-</pre></div>
+    var zoo = [new Rhino(), new Elephant(), new Snake()];
 
 Ideally, we may want zoo to be inferred as an Animal[], but because there is no object that is strictly of type Animal in the array, we make no inference about the array element type. To correct this, instead explicitly provide the type when no one type is a super type of all other candidates:
 
-<div><pre>var zoo: Animal[] = [new Rhino(), new Elephant(), new Snake()];
-</pre></div>
+    var zoo: Animal[] = [new Rhino(), new Elephant(), new Snake()];
 
 When no best common type is found, the resulting inference is the empty object type, {}. Because this type has no members, attempting to use any properties of it will cause an error. This result allows you to still use the object in a type-agnostic manner, while providing type safety in cases where the type of the object can't be implicitly determined.
 
@@ -2203,28 +2141,25 @@ When no best common type is found, the resulting inference is the empty object t
 
 Type inference also works in "the other direction" in some cases in TypeScript. This is known as "contextual typing". Contextual typing occurs when the type of an expression is implied by its location. For example: 
 
-<div><pre>window.onmousedown = function(mouseEvent) { 
-    console.log(mouseEvent.buton);  //<- Error  
-};
-</pre></div>
+    window.onmousedown = function(mouseEvent) { 
+        console.log(mouseEvent.buton);  //<- Error  
+    };
 
 For the code above to give the type error, the TypeScript type checker used the type of the Window.onmousedown function to infer the type of the function expression on the right hand side of the assignment. When it did so, it was able to infer the type of the mouseEvent parameter. If this function expression were not in a contextually typed position, the mouseEventparameter would have type any, and no error would have been issued.
 
 If the contextually typed expression contains explicit type information, the contextual type is ignored. Had we written the above example:
 
-<div><pre>window.onmousedown = function(mouseEvent: any) { 
-    console.log(mouseEvent.buton);  //<- Now, no error is given  
-};
-</pre></div>
+    window.onmousedown = function(mouseEvent: any) { 
+        console.log(mouseEvent.buton);  //<- Now, no error is given  
+    };
 
 The function expression with an explicit type annotation on the parameter will override the contextual type. Once it does so, no error is given as no contextual type applies.
 
 Contextual typing applies in many cases. Common cases include arguments to function calls, right hand sides of assignments, type assertions, members of object and array literals, and return statements. The contextual type also acts as a candidate type in best common type. For example:
 
-<div><pre>function createZoo(): Animal[] {
-    return [new Rhino(), new Elephant(), new Snake()];
-}
-</pre></div>
+    function createZoo(): Animal[] {
+        return [new Rhino(), new Elephant(), new Snake()];
+    }
 
 In this example, best common type has a set of four candidates: Animal, Rhino, Elephant, and Snake. Of these, Animal can be chosen by the best common type algorithm.
 
@@ -2232,18 +2167,17 @@ In this example, best common type has a set of four candidates: Animal, Rhino, E
 
 Type compatibility in TypeScript is based on structural subtyping. Structural typing is a way of relating types based solely on their members. This is in contrast with nominal typing. Consider the following code:
 
-<div><pre>interface Named {
-    name: string;
-}
+    interface Named {
+        name: string;
+    }
 
-class Person {
-    name: string;
-}
+    class Person {
+        name: string;
+    }
 
-var p: Named;
-// OK, because of structural typing
-p = new Person();
-</pre></div>
+    var p: Named;
+    // OK, because of structural typing
+    p = new Person();
 
 In nominally-typed languages like C# or Java, the equivalent code would be an error because the Person class does not explicitly describe itself as being an implementor of the Named interface.
 
@@ -2257,25 +2191,23 @@ TypeScript’s type system allows certain operations that can’t be known at co
 
 The basic rule for TypeScript’s structural type system is that x is compatible with y if y has at least the same members as x. For example:
 
-<div><pre>interface Named {
-    name: string;
-}
+    interface Named {
+        name: string;
+    }
 
-var x: Named;
-// y’s inferred type is { name: string; location: string; }
-var y = { name: 'Alice', location: 'Seattle' };
-x = y;
-</pre></div>
+    var x: Named;
+    // y’s inferred type is { name: string; location: string; }
+    var y = { name: 'Alice', location: 'Seattle' };
+    x = y;
 
 To check whether y can be assigned to x, the compiler checks each property of x to find a corresponding compatible property in y. In this case, y must have a member called ‘name’ that is a string. It does, so the assignment is allowed.
 
 The same rule for assignment is used when checking function call arguments:
 
-<div><pre>function greet(n: Named) {
-    alert('Hello, ' + n.name);
-}
-greet(y); // OK
-</pre></div>
+    function greet(n: Named) {
+        alert('Hello, ' + n.name);
+    }
+    greet(y); // OK
 
 Note that ‘y’ has an extra ‘location’ property, but this does not create an error. Only members of the target type (‘Named’ in this case) are considered when checking for compatibility.
 
@@ -2285,12 +2217,11 @@ This comparison process proceeds recursively, exploring the type of each member 
 
 While comparing primitive types and object types is relatively straightforward, the question of what kinds of functions should be considered compatible. Let’s start with a basic example of two functions that differ only in their argument lists:
 
-<div><pre>var x = (a: number) => 0;
-var y = (b: number, s: string) => 0;
+    var x = (a: number) => 0;
+    var y = (b: number, s: string) => 0;
 
-y = x; // OK
-x = y; // Error
-</pre></div>
+    y = x; // OK
+    x = y; // Error
 
 To check if x is assignable to y, we first look at the parameter list. Each parameter in y must have a corresponding parameter in x with a compatible type. Note that the names of the parameters are not considered, only their types. In this case, every parameter of x has a corresponding compatible parameter in y, so the assignment is allowed.
 
@@ -2298,23 +2229,20 @@ The second assignment is an error, because y has a required second parameter tha
 
 You may be wondering why we allow ‘discarding’ parameters like in the example y = x. The reason is that assignment is allowed is that ignoring extra function parameters is actually quite common in JavaScript. For example, Array#forEach provides three arguments to the callback function: the array element, its index, and the containing array. Nevertheless, it’s very useful to provide a callback that only uses the first argument:
 
-<div><pre>var items = [1, 2, 3];
+    var items = [1, 2, 3];
+    // Don't force these extra arguments
+    items.forEach((item, index, array) => console.log(item));
 
-// Don't force these extra arguments
-items.forEach((item, index, array) => console.log(item));
-
-// Should be OK!
-items.forEach((item) => console.log(item));
-</pre></div>
+    // Should be OK!
+    items.forEach((item) => console.log(item));
 
 Now let’s look at how return types are treated, using two functions that differ only by their return type:
 
-<div><pre>var x = () => ({name: 'Alice'});
-var y = () => ({name: 'Alice', location: 'Seattle'});
+    var x = () => ({name: 'Alice'});
+    var y = () => ({name: 'Alice', location: 'Seattle'});
 
-x = y; // OK
-y = x; // Error because x() lacks a location property
-</pre></div>
+    x = y; // OK
+    y = x; // Error because x() lacks a location property
 
 The type system enforces that the source function’s return type be a subtype of the target type’s return type.
 
@@ -2322,26 +2250,25 @@ The type system enforces that the source function’s return type be a subtype o
 
 When comparing the types of function parameters, assignment succeeds if either the source parameter is assignable to the target parameter, or vice versa. This is unsound because a caller might end up being given a function that takes a more specialized type, but invokes the function with a less specialized type. In practice, this sort of error is rare, and allowing this enables many common JavaScript patterns. A brief example:
 
-<div><pre>enum EventType { Mouse, Keyboard }
+    enum EventType { Mouse, Keyboard }
 
-interface Event { timestamp: number; }
-interface MouseEvent extends Event { x: number; y: number }
-interface KeyEvent extends Event { keyCode: number }
+    interface Event { timestamp: number; }
+    interface MouseEvent extends Event { x: number; y: number }
+    interface KeyEvent extends Event { keyCode: number }
 
-function listenEvent(eventType: EventType, handler: (n: Event) => void) {
-    /* ... */
-}
+    function listenEvent(eventType: EventType, handler: (n: Event) => void) {
+        /* ... */
+    }
 
-// Unsound, but useful and common
-listenEvent(EventType.Mouse, (e: MouseEvent) => console.log(e.x + ',' + e.y));
+    // Unsound, but useful and common
+    listenEvent(EventType.Mouse, (e: MouseEvent) => console.log(e.x + ',' + e.y));
 
-// Undesirable alternatives in presence of soundness
-listenEvent(EventType.Mouse, (e: Event) => console.log((<MouseEvent>e).x + ',' + (<MouseEvent>e).y));
-listenEvent(EventType.Mouse, <(e: Event) => void>((e: MouseEvent) => console.log(e.x + ',' + e.y)));
+    // Undesirable alternatives in presence of soundness
+    listenEvent(EventType.Mouse, (e: Event) => console.log((<MouseEvent>e).x + ',' + (<MouseEvent>e).y));
+    listenEvent(EventType.Mouse, <(e: Event) => void>((e: MouseEvent) => console.log(e.x + ',' + e.y)));
 
-// Still disallowed (clear error). Type safety enforced for wholly incompatible types
-listenEvent(EventType.Mouse, (e: number) => console.log(e));
-</pre></div>
+    // Still disallowed (clear error). Type safety enforced for wholly incompatible types
+    listenEvent(EventType.Mouse, (e: number) => console.log(e));
 
 ### Optional Arguments and Rest Arguments
 
@@ -2353,16 +2280,15 @@ This is unsound from a type system perspective, but from a runtime point of view
 
 The motivating example is the common pattern of a function that takes a callback and invokes it with some predictable (to the programmer) but unknown (to the type system) number of arguments:
 
-<div><pre>function invokeLater(args: any[], callback: (...args: any[]) => void) {
-    /* ... Invoke callback with 'args' ... */
-}
+    function invokeLater(args: any[], callback: (...args: any[]) => void) {
+        /* ... Invoke callback with 'args' ... */
+    }
 
-// Unsound - invokeLater "might" provide any number of arguments
-invokeLater([1, 2], (x, y) => console.log(x + ', ' + y));
+    // Unsound - invokeLater "might" provide any number of arguments
+    invokeLater([1, 2], (x, y) => console.log(x + ', ' + y));
 
-// Confusing (x and y are actually required) and undiscoverable
-invokeLater([1, 2], (x?, y?) => console.log(x + ', ' + y));
-</pre></div>
+    // Confusing (x and y are actually required) and undiscoverable
+    invokeLater([1, 2], (x?, y?) => console.log(x + ', ' + y));
 
 ### Functions with overloads
 
@@ -2372,33 +2298,31 @@ When a function has overloads, each overload in the source type must be matched 
 
 Enums are compatible with numbers, and numbers are compatible with enums. Enum values from different enum types are considered incompatible. For example,
 
-<div><pre>enum Status { Ready, Waiting };
-enum Color { Red, Blue, Green };
+    enum Status { Ready, Waiting };
+    enum Color { Red, Blue, Green };
 
-var status = Status.Ready;
-status = Color.Green;  //error
-</pre></div>
+    var status = Status.Ready;
+    status = Color.Green;  //error
 
 ## Classes
 
 Classes work similarly to object literal types and interfaces with one exception: they have both a static and an instance type. When comparing two objects of a class type, only members of the instance are compared. Static members and constructors do not affect compatibility. 
 
-<div><pre>class Animal {
-    feet: number;
-    constructor(name: string, numFeet: number) { }
-}
+    class Animal {
+        feet: number;
+        constructor(name: string, numFeet: number) { }
+    }
 
-class Size {
-    feet: number;
-    constructor(numFeet: number) { }
-}
+    class Size {
+        feet: number;
+        constructor(numFeet: number) { }
+    }
 
-var a: Animal;
-var s: Size;
+    var a: Animal;
+    var s: Size;
 
-a = s;  //OK
-s = a;  //OK
-</pre></div>
+    a = s;  //OK
+    s = a;  //OK
 
 ### Private members in classes
 
@@ -2408,24 +2332,22 @@ Private members in a class affect their compatibility. When an instance of a cla
 
 Because TypeScript is a structural type system, type parameters only affect the resulting type when consumed as part of the type of a member. For example,
 
-<div><pre>interface Empty<T> {
-}
-var x: Empty<number>;
-var y: Empty<string>;
+    interface Empty<T> {
+    }
+    var x: Empty<number>;
+    var y: Empty<string>;
 
-x = y;  // okay, y matches structure of x
-</pre></div>
+    x = y;  // okay, y matches structure of x
 
 In the above, x and y are compatible because their structures do not use the type argument in a differentiating way. Changing this example by adding a member to Empty<T> shows how this works:
 
-<div><pre>interface NotEmpty<T> {
-    data: T;
-}
-var x: NotEmpty<number>;
-var y: NotEmpty<string>;
+    interface NotEmpty<T> {
+        data: T;
+    }
+    var x: NotEmpty<number>;
+    var y: NotEmpty<string>;
 
-x = y;  // error, x and y are not compatible
-</pre></div>
+    x = y;  // error, x and y are not compatible
 
 In this way, a generic type that has its type arguments specified acts just like a non-generic type.
 
@@ -2433,16 +2355,15 @@ For generic types that do not have their type arguments specified, compatibility
 
 For example,
 
-<div><pre>var identity = function<T>(x: T): T { 
-    // ...
-}
+    var identity = function<T>(x: T): T { 
+        // ...
+    }
 
-var reverse = function<U>(y: U): U {
-    // ...
-}
+    var reverse = function<U>(y: U): U {
+        // ...
+    }
 
-identity = reverse;  // Okay because (x: any)=>any matches (y: any)=>any
-</pre></div>
+    identity = reverse;  // Okay because (x: any)=>any matches (y: any)=>any
 
 ## Advanced Topics
 
@@ -2476,20 +2397,17 @@ When writing definition files, it's important to remember TypeScript's rules for
 
 Anonymously-typed var
 
-<div><pre>declare var MyPoint: { x: number; y: number; };
-</pre></div>
+    declare var MyPoint: { x: number; y: number; };
 
 Interfaced-typed var
 
-<div><pre>interface SomePoint { x: number; y: number; }
-declare var MyPoint: SomePoint;
-</pre></div>
+    interface SomePoint { x: number; y: number; }
+    declare var MyPoint: SomePoint;
 
 From a consumption side these declarations are identical, but the type SomePoint can be extended through interface merging:
 
-<div><pre>interface SomePoint { z: number; }
-MyPoint.z = 4; // OK
-</pre></div>
+    interface SomePoint { z: number; }
+    MyPoint.z = 4; // OK
 
 Whether or not you want your declarations to be extensible in this way is a bit of a judgement call. As always, try to represent the intent of the library here.
 
@@ -2503,24 +2421,22 @@ As an example, the following two declarations are nearly equivalent from a consu
 
 Standard
 
-<div><pre>class A {
-    static st: string;
-    inst: number;
-    constructor(m: any) {}
-}
-</pre></div>
+    class A {
+        static st: string;
+        inst: number;
+        constructor(m: any) {}
+    }
 
 Decomposed
 
-<div><pre>interface A_Static {
-    new(m: any): A_Instance;
-    st: string;
-}
-interface A_Instance {
-    inst: number;
-}
-declare var A: A_Static;
-</pre></div>
+    interface A_Static {
+        new(m: any): A_Instance;
+        st: string;
+    }
+    interface A_Instance {
+        inst: number;
+    }
+    declare var A: A_Static;
 
 The trade-offs here are as follows:
 
@@ -2540,115 +2456,116 @@ Let's jump in to the examples section. For each example, sample _usage_ of the
 ### Options Objects
 
 Usage
-<div><pre>animalFactory.create("dog");
-animalFactory.create("giraffe", { name: "ronald" });
-animalFactory.create("panda", { name: "bob", height: 400 });
-// Invalid: name must be provided if options is given
-animalFactory.create("cat", { height: 32 });
-</pre></div>
+
+    animalFactory.create("dog");
+    animalFactory.create("giraffe", { name: "ronald" });
+    animalFactory.create("panda", { name: "bob", height: 400 });
+    // Invalid: name must be provided if options is given
+    animalFactory.create("cat", { height: 32 });
 
 Typing
-<div><pre>module animalFactory {
-    interface AnimalOptions {
-        name: string;
-        height?: number;
-        weight?: number;
+
+    module animalFactory {
+        interface AnimalOptions {
+            name: string;
+            height?: number;
+            weight?: number;
+        }
+        function create(name: string, animalOptions?: AnimalOptions): Animal;
     }
-    function create(name: string, animalOptions?: AnimalOptions): Animal;
-}
-</pre></div>
 
 ### Functions with Properties
 
 Usage
-<div><pre>zooKeeper.workSchedule = "morning";
-zooKeeper(giraffeCage);
-</pre></div>
+
+    zooKeeper.workSchedule = "morning";
+    zooKeeper(giraffeCage);
 
 Typing
-<div><pre>// Note: Function must precede module
-function zooKeeper(cage: AnimalCage);
-module zooKeeper {
-    var workSchedule: string;
-}
-</pre></div>
+
+    // Note: Function must precede module
+    function zooKeeper(cage: AnimalCage);
+    module zooKeeper {
+        var workSchedule: string;
+    }
 
 ### New + callable methods
 
 Usage
-<div><pre>var w = widget(32, 16);
-var y = new widget("sprocket");
-// w and y are both widgets
-w.sprock();
-y.sprock();
-</pre></div>
+
+    var w = widget(32, 16);
+    var y = new widget("sprocket");
+    // w and y are both widgets
+    w.sprock();
+    y.sprock();
 
 Typing
-<div><pre>interface Widget {
-    sprock(): void;
-}
 
-interface WidgetFactory {
-    new(name: string): Widget;
-    (width: number, height: number): Widget;
-}
+    interface Widget {
+        sprock(): void;
+    }
 
-declare var widget: WidgetFactory;
-</pre></div>
+    interface WidgetFactory {
+        new(name: string): Widget;
+        (width: number, height: number): Widget;
+    }
+
+    declare var widget: WidgetFactory;
 
 ### Global / External-agnostic Libraries
 
 Usage
-<div><pre>// Either
-import x = require('zoo');
-x.open();
-// or
-zoo.open();
-</pre></div>
+
+    // Either
+    import x = require('zoo');
+    x.open();
+    // or
+    zoo.open();
 
 Typing
-<div><pre>module zoo {
-  function open(): void;
-}
 
-declare module "zoo" {
-    export = zoo;
-}
-</pre></div>
+    module zoo {
+      function open(): void;
+    }
+
+    declare module "zoo" {
+        export = zoo;
+    }
 
 ### Single Complex Object in External Modules
 
 Usage
-<div><pre>// Super-chainable library for eagles
-import eagle = require('./eagle');
-// Call directly
-eagle('bald').fly();
-// Invoke with new
-var eddie = new eagle(1000);
-// Set properties
-eagle.favorite = 'golden';
-</pre></div>
+
+    // Super-chainable library for eagles
+    import eagle = require('./eagle');
+    // Call directly
+    eagle('bald').fly();
+    // Invoke with new
+    var eddie = new eagle(1000);
+    // Set properties
+    eagle.favorite = 'golden';
 
 Typing
-<div><pre>// Note: can use any name here, but has to be the same throughout this file
-declare function eagle(name: string): eagle;
-declare module eagle {
-    var favorite: string;
-    function fly(): void;
-}
-interface eagle {
-    new(awesomeness: number): eagle;
-}
 
-export = eagle;
-</pre></div>
+    // Note: can use any name here, but has to be the same throughout this file
+    declare function eagle(name: string): eagle;
+    declare module eagle {
+        var favorite: string;
+        function fly(): void;
+    }
+    interface eagle {
+        new(awesomeness: number): eagle;
+    }
+
+    export = eagle;
 
 ### Callbacks
 
 Usage
-<div><pre>addLater(3, 4, (x) => console.log('x = ' + x));
-</pre></div>
+
+    addLater(3, 4, (x) => console.log('x = ' + x));
 
 Typing
-<div><pre>// Note: 'void' return type is preferred here
-function addLater(x: number, y: number, (sum: number) => void): void;</pre></div>
+
+    // Note: 'void' return type is preferred here
+    function addLater(x: number, y: number, (sum: number) => void): void;
