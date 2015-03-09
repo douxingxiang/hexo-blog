@@ -28,6 +28,14 @@
           <a <% if (!theme.excerpt_link){ %>class="hidden"<% } %> href="<%- url_for(post.path) %>#more"><%= theme.excerpt_link %> >></a>
         </p>
       <% } else { %>
+        <!-- 文章目录开始 -->
+        <% if (!index){ %>
+          <div id="toc" class="toc-article">
+            <strong class="toc-title"><%= __('contents') %></strong>
+          <%- toc(page.content) %>
+          </div>
+        <% } %>
+        <!-- 文章目录结束 -->
         <%- post.content %>
         <% if (index){ %>
           <!-- show an end symbol if the article is fully displayed -->

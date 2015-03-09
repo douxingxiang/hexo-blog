@@ -37,3 +37,4 @@ function createSquare(config: SquareConfig): {color: string; area: number} {
 var mySquare = createSquare({color: "black"});
 console.log(mySquare);
 
+

@@ -1,6 +1,7 @@
 title: 从Win到Mac
 date: 2015-03-08 21:53:00
 categories: 从Win到Mac
+published: false
 ---
 
 > Win和Mac在很多方面，比如硬件配置、系统操作、软件使用或多或少都有些区别。这些区别有的很大，需要逐渐适应，有的很小，没什么不适应。但从Win到Mac的过渡过程中，遇到的问题和解决的方法，值得分享，一方面可以备忘，另一方面万一对别人有帮助怎么办。
@@ -10,7 +11,7 @@ categories: 从Win到Mac
 > 老笔记本是09年买的Dell 1427，新笔记本是14年买的MBP 15寸，下面可能混用win和dell代替dell 1427，mac和mbp代指mbp 15寸笔记本。其他机型的使用经验有限，不对的地方欢迎指出。
 
 这里的硬件配置包括笔记本的接口、触摸板、鼠标、键盘、适配器等，拆机经验基本为0，内部的东西真不知道。
-
+<!--more-->
 ### 接口
 
 dell的[机身接口](http://www.pcpop.com/doc/0/415/415338.shtml)有：4个USB2.0接口、[IEEE1394](http://zh.wikipedia.org/wiki/IEEE_1394)端口（1394a 4Pin，类似USB）、[VGA接口](http://baike.baidu.com/subview/10346/15379210.htm)（显示输出）、1组音频输入/输出口、RJ-45接口（以太网口）、ExpressCard插槽（可以插USB2.0到3.0的转换器）和4合1读卡器（[SD/MMC/MS/MS PRO四合一](http://baike.baidu.com/view/491187.htm)，可以插相机的大卡）。除了这些接口外，机身还有一个蓝牙/无线开关、一个电源充电插口、一个光驱。
