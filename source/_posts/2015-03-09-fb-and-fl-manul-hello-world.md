@@ -4,8 +4,6 @@ tags: ActionScript
 categories: FlashBuilder和FlashCS手册
 ---
 
-## 一个完整的例子
-
 ### 启动FB
 
 首先启动FB，会提示选择__工作空间（Workspace）__。
@@ -13,7 +11,7 @@ categories: FlashBuilder和FlashCS手册
 > 工作空间是一个存放项目的文件目录，FB会保存用户的工作台和各种插件的设置。也就是说工作空间是FB/eclipse项目管理的单位。
 
 ![选择工作空间](/images/fbnfl/1_choose_workspace.png "选择工作空间")
-
+<!--more-->
 #### 导出首选项（可选）
 
 如果想在其他工作空间使用这些配置，可以导出首选项，然后在另一个空间导入。
