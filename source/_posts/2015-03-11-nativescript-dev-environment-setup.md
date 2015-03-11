@@ -1,4 +1,4 @@
-title: 安装NativeScript开发环境
+title: Windows安装NativeScript开发环境
 date: 2015-03-11 11:22
 tags: NativeScript
 categories: NativeScript入门
