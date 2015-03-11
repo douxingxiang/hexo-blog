@@ -42,16 +42,21 @@ There are a number of ways you can update UI state and keep it synchronised with
 
 There are slight more elegant methods, that minimise the code required to manage these two flows of data (from model to view and view to model), search as ReactiveCocoa bindings:
 
-
+还有稍微优雅点的方式来减少管理双向数据流（从模型到视图，从视图到模型）的代码，ReactiveCocoa绑定：
 
 ``` csharp
-    searchTextField.rac_textSignal() ~> RAC(viewModel, "searchText")
+searchTextField.rac_textSignal() ~> RAC(viewModel, "searchText")
 ```
 
 (The above uses a few [Swift ‘shims’ over ReactiveCocoa](http://www.scottlogic.com/blog/2014/07/24/mvvm-reactivecocoa-swift.html))
 
+（上面使用了一些[ReactiveCocoa上的Swift垫片](http://www.scottlogic.com/blog/2014/07/24/mvvm-reactivecocoa-swift.html)）
+
 Or more recent concepts such as [Bond](https://github.com/SwiftBond/Bond):
-<div><pre><code data-lang="csharp">textField ->> label</code></pre></div>
+
+``` csharp
+textField ->> label
+```
 
 However, regardless of the mechanism you use to keep your view synchronised with your model, it will always involve replication of state. One copy in your model, and another copy in your view.
 
