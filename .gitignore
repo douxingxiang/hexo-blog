@@ -5,4 +5,5 @@ debug.log
 node_modules/
 .deploy_git/
 .deploy
+.idea
 public

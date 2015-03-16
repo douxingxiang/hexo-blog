@@ -301,11 +301,15 @@ This simple example shows how the names used during importing and exporting get 
 
 In the previous example, when we consumed each validator, each module only exported one value. In cases like this, it's cumbersome to work with these symbols through their qualified name when a single identifier would do just as well.
 
-
+上一个例子，每次我们使用验证器时，每个模块只导出一个值。这类例子中，单个标识符就可以，所以通过限定名来处理这些符号就比较麻烦。
 
 The export = syntax specifies a single object that is exported from the module. This can be a class, interface, module, function, or enum. When imported, the exported symbol is consumed directly and is not qualified by any name.
 
+export =语法指定模块导出的单个对象。可以是类、接口、函数或枚举。符号导入后可以直接使用，也不用通过任何名称来限定。
+
 Below, we've simplified the Validator implementations to only export a single object from each module using the export = syntax. This simplifies the consumption code – instead of referring to 'zip.ZipCodeValidator', we can simply refer to 'zipValidator'.
+
+下面，我们简化Validator的实现，使用`export =` 语法每个模块值导出单个对象。这样代码得到了简化，我们可以简单地引用`zipValidator`而不用引用`zip.ZipCodeValidator`。
 
 ###### Validation.ts
 
@@ -355,10 +359,14 @@ Below, we've simplified the Validator implementations to only export a single ob
     });
 
 ## Alias
+## 别名
 
 Another way that you can simplify working with either kind of module is to use _import q = x.y.z_ to create shorter names for commonly-used objects. Not to be confused with the _import x = require('name')_ syntax used to load external modules, this syntax simply creates an alias for the specified symbol. You can use these sorts of imports (commonly referred to as aliases) for any kind of identifier, including objects created from external module imports.
 
+简化处理模块的另一方式可以使用_import q = x.y.z_来为常用对象创建短名称。不要与_import x = require('name')_混淆，那个语法用于加载外部模块，这个可以为特定符号创建别名。你可以导入（通常称作别名）任何类型的标识符，包括外部模块导入中创建的对象。
+
 ###### Basic Aliasing
+###### 基本别名
     
     module Shapes {
         export module Polygons {
@@ -372,17 +380,29 @@ Another way that you can simplify working with either kind of module is to use 
 
 Notice that we don't use the _require_ keyword; instead we assign directly from the qualified name of the symbol we're importing. This is similar to using _var_, but also works on the type and namespace meanings of the imported symbol. Importantly, for values, _import_ is a distinct reference from the original symbol, so changes to an aliased _var_ will not be reflected in the original variable.
 
+注意我们没有使用_require_关键字；相反我们直接使用所导入的符号限定名来直接赋值。这种方式与使用_var_类似，导入符号的类型和名称空间上也可用。对值来说重要的一点是，_import_是原始符号的特定引用，所以一个别名_var_的改变不会影响原始变量。
+
 ## Optional Module Loading and Other Advanced Loading Scenarios
+## 可选的模块加载和其他高级加载场景
 
 In some cases, you may want to only load a module under some conditions. In TypeScript, we can use the pattern shown below to implement this and other advanced loading scenarios to directly invoke the module loaders without losing type safety.
 
+某些情形下，你可能希望根据条件只加载一个模块。TypeScript中，我们可以使用下面的模式通过直接调用模块加载器而又不失类型安全性的方式来实现这个目的以及其他高级加载场景。
+
 The compiler detects whether each module is used in the emitted JavaScript. For modules that are only used as part of the type system, no require calls are emitted. This culling of unused references is a good performance optimization, and also allows for optional loading of those modules.
+
+编译器会检测每个模块是否会被用到。对只作为部分类型系统的模块，不会进行require调用。剔除未用到的引用可以进行很好的性能优化，同时还允许可选地加载这些模块。
 
 The core idea of the pattern is that the _import id = require('...')_ statement gives us access to the types exposed by the external module. The module loader is invoked (through require) dynamically, as shown in the if blocks below. This leverages the reference-culling optimization so that the module is only loaded when needed. For this pattern to work, it's important that the symbol defined via import is only used in type positions (i.e. never in a position that would be emitted into the JavaScript).
 
+该模式的核心思想是_import id = require('...')_语句允许我们访问外部模块暴露给我们的类型。模块加载器会动态调用（通过require），如下面的if代码块。这会影响引用剔除优化，模块只会在需要的时候才加载。要让这个模式起作用，通过import定义的符号只能用于类型位置（即不能用在可以导出到JavaScript的位置）。
+
 To maintain type safety, we can use the _typeof_ keyword. The _typeof_ keyword, when used in a type position, produces the type of a value, in this case the type of the external module.
 
+我们可以使用_typeof_关键字来维护类型安全性。用在类型位置时，_typeof_关键字将会生成一个值的类型，本例中是外部模块的类型。
+
 ###### Dynamic Module Loading in node.js
+###### node.js中的冬天模块加载
     
     declare var require;
     import Zip = require('./ZipCodeValidator');
@@ -392,6 +412,7 @@ To maintain type safety, we can use the _typeof_ keyword. The _typeof_ keywo
     }
 
 ###### Sample: Dynamic Module Loading in require.js
+###### 例子：require.js中的动态模块加载
 
     declare var require;
     import Zip = require('./ZipCodeValidator');
@@ -402,14 +423,21 @@ To maintain type safety, we can use the _typeof_ keyword. The _typeof_ keywo
     }
 
 ## Working with Other JavaScript Libraries
+## 使用其他JavaScript库
 
 To describe the shape of libraries not written in TypeScript, we need to declare the API that the library exposes. Because most JavaScript libraries expose only a few top-level objects, modules are a good way to represent them. We call declarations that don't define an implementation "ambient". Typically these are defined in .d.ts files. If you're familiar with C/C++, you can think of these as .h files or 'extern'. Let's look at a few examples with both internal and external examples.
 
+为了描述非TypeScript编写的库，我们需要声明该库暴露的API。由于大多数JavaScript库只暴露一些顶级对象，用模块来表示是个很好的方式。我们称没有定义实现的声明是“周边的”（ambient）。通常这些在.d.ts文件中定义。如果熟悉C/C++，你可以认为他们是.h文件或“extern”。我们看几个内部和外部模块的例子。
+
 #### Ambient Internal Modules
+#### 周边内部模块
 
 The popular library D3 defines its functionality in a global object called 'D3'. Because this library is loaded through a _script_tag (instead of a module loader), its declaration uses internal modules to define its shape. For the TypeScript compiler to see this shape, we use an ambient internal module declaration. For example:
 
+著名的D3库使用一个全局对象“D3”来定义其功能。由于库是通过_script_标签（而不是模块加载器）加载，所以它的声明使用内部模块来定义其类型。让TypeScript编译器检查类型，我们使用周边内部模块声明。例如：
+
 ###### D3.d.ts (simplified excerpt)
+###### D3.d.ts (简化的摘录)
     
     declare module D3 {
         export interface Selectors {
@@ -432,10 +460,14 @@ The popular library D3 defines its functionality in a global object called 'D3'.
     declare var d3: D3.Base;
 
 #### Ambient External Modules
+#### 周边外部模块
 
 In node.js, most tasks are accomplished by loading one or more modules. We could define each module in its own .d.ts file with top-level export declarations, but it's more convenient to write them as one larger .d.ts file. To do so, we use the quoted name of the module, which will be available to a later import. For example:
 
+node.js中，绝大多数任务都要加载一个或多个模块来完成任务。我们可以使用顶级导出声明在其.d.ts文件中定义每个模块，但是编写单个更大的.d.ts文件更方便。为了达到母的，我们引用模块的名称，用于延期导入。例如：
+
 ###### node.d.ts (simplified excerpt)
+###### node.d.ts（简化摘录）
     
     declare module "url" {
         export interface Url {
@@ -455,23 +487,37 @@ In node.js, most tasks are accomplished by loading one or more modules. We could
 
 Now we can _/// <reference>_ node.d.ts and then load the modules using e.g. _import url = require('url');_.
 
+现在我们可以使用_/// <reference>_来引用node.d.ts，然后使用_import url = require('url');_来加载模块。
+
     ///<reference path="node.d.ts"/>
     import url = require("url");
     var myUrl = url.parse("http://www.typescriptlang.org");
 
 ## Pitfalls of Modules
+## 模块的陷阱
 
 In this section we'll describe various common pitfalls in using internal and external modules, and how to avoid them.
 
+本节我们描述一些使用内部和外部模块的常见陷阱，以及如何避免。
+
 #### /// <reference> to an external module
+#### /// <reference>来引用外部模块
 
 A common mistake is to try to use the /// <reference> syntax to refer to an external module file, rather than using import. To understand the distinction, we first need to understand the three ways that the compiler can locate the type information for an external module.
 
+一个常见错误是使用/// <reference>语法而不是使用import来引用外部模块文件。为了理解其中的区别，我们首先需要理解编译器定位外部模块中类型信息的三种方式。
+
 The first is by finding a .ts file named by an _import x = require(...);_ declaration. That file should be an implementation file with top-level import or export declarations.
+
+第一种是查找_import x = require(...);_命名的.ts文件。那个文件必须是包含顶部导入和导出声明的实现文件。
 
 The second is by finding a .d.ts file, similar to above, except that instead of being an implementation file, it's a declaration file (also with top-level import or export declarations).
 
+第二种是寻找.d.ts文件，与上面类似，但是这个文件不是实现文件，而是声明文件（也包含顶级导入或导出声明）。
+
 The final way is by seeing an "ambient external module declaration", where we 'declare' a module with a matching quoted name.
+
+最后一种是查看“周边外部模块声明”，我们使用引号包裹的名称来`declare`一个模块。
 
 ###### myModules.d.ts
     
@@ -487,9 +533,14 @@ The final way is by seeing an "ambient external module declaration", where we 'd
 
 The reference tag here allows us to locate the declaration file that contains the declaration for the ambient external module. This is how the node.d.ts file that several of the TypeScript samples use is consumed, for example.
 
+这里的引用标签允许我们定位包含周边外部模块声明的声明文件。这就是一些TypeScript例子中用到的node.d.ts文件的方式。
+
 #### Needless Namespacing
+#### 不必要的命名空间
 
 If you're converting a program from internal modules to external modules, it can be easy to end up with a file that looks like this:
+
+如果想把内部模块中的程序转到外部模块，很容易就会变成这样：
 
 ###### shapes.ts
     
@@ -500,6 +551,8 @@ If you're converting a program from internal modules to external modules, it can
 
 The top-level module here _Shapes_ wraps up _Triangle_ and _Square_ for no reason. This is confusing and annoying for consumers of your module:
 
+这里的顶级模块_Shapes_毫无道理地包装了_Triangle_和_Square_。这会让使用你模块的用户感到困惑和烦恼。
+
 ###### shapeConsumer.ts
 
     import shapes = require('./shapes');
@@ -507,20 +560,28 @@ The top-level module here _Shapes_ wraps up _Triangle_ and _Square_ for no
 
 A key feature of external modules in TypeScript is that two different external modules will never contribute names to the same scope. Because the consumer of an external module decides what name to assign it, there's no need to proactively wrap up the exported symbols in a namespace.
 
+TypeScript中外部模块的一个关键特性是两个不同的外部模块不会共享同一块作用域。由于外部模块的使用者决定其名称，没有必要事先将导出符号包装到一个命名空间。
+
 To reiterate why you shouldn't try to namespace your external module contents, the general idea of namespacing is to provide logical grouping of constructs and to prevent name collisions. Because the external module file itself is already a logical grouping, and its top-level name is defined by the code that imports it, it's unnecessary to use an additional module layer for exported objects.
 
+解释下你为什么不应该用命名空间包装外部模块的内容：命名空间的一般思想是提供构建的逻辑分组，以及避免命名冲突。由于外部模块文件本身已经是个逻辑分组，顶级命名由导入它的代码定义，所以没有必要对导出对象使用附加模块层
+
 Revised Example:
+修改后的例子：
 
 ###### shapes.ts
 
     export class Triangle { /* ... */ }
     export class Square { /* ... */ }
-
+ 
 ###### shapeConsumer.ts
 
     import shapes = require('./shapes');
     var t = new shapes.Triangle(); 
 
 #### Trade-offs for External Modules
+#### 外部模块的取舍
 
 Just as there is a one-to-one correspondence between JS files and modules, TypeScript has a one-to-one correspondence between external module source files and their emitted JS files. One effect of this is that it's not possible to use the _--out_compiler switch to concatenate multiple external module source files into a single JavaScript file.
+
+就像JS文件和模块之间没有一对一对应关系一样，TypeScript的外部模块源文件和生成的JS文件之间也没有一一对应关系。其中一个影响是不能使用_--out_编译器开关来连接多个外部模块源文件生成单个JavaScript文件。
