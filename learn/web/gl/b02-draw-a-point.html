@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/index.css" type="text/css" />
+    <title>WebGL</title>
+</head>
+<body onload="main()">
+    <canvas id="canvas" width="640" height="480">
+        你的浏览器不支持canvas标签！
+    </canvas>
+    <script type="text/javascript" src="js/gl-utils.js"></script>
+    <script type="text/javascript" src="js/b02-draw-a-point.js"></script>
+
+    <script id="shader-vs" type="x-shader/x-vertex">
+        void main() {
+            gl_Position = vec4(0.0, 0.0, 0.0, 1.0);//正中心
+            gl_PointSize = 10.0;//点大小
+        }
+    </script>
+    <script id="shader-fs" type="x-shader/x-fragment">
+        void main(void) {
+            gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);//黄色
+        }
+    </script>
+</body>
+</html>
